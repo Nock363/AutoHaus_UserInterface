@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Container mit Überschrift und Button</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: auto;
+			padding: 0;
+			width: 100%;
+			max-width: 1400px;
+		}
+
+		.container {
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			margin: 10px;
+			padding: 10px;
+			box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+		}
+
+		.container h2 {
+			display: inline-block;
+			margin: 0;
+			font-size: 1.2rem;
+			font-weight: bold;
+			color: #555;
+			margin-bottom: 10px;
+		}
+
+		.container button {
+			float: right;
+			background-color: #555;
+			color: #fff;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 3px;
+			cursor: pointer;
+			transition: background-color 0.2s ease;
+		}
+
+		.container button:hover {
+			background-color: #333;
+		}
+
+		.container .content {
+			display: none;
+			padding-top: 10px;
+		}
+
+		.container.active .content {
+			display: block;
+		}
+
+		/* Responsive Design for table */
+		table {
+			border-collapse: collapse;
+			overflow-y: scroll;
+			width: 100%;
+		}
+
+		th, td {
+			text-align: left;
+			padding: 8px;
+		}
+
+		tr:nth-child(even){background-color: #f2f2f2}
+
+		th {
+			background-color: #4CAF50;
+			color: white;
+		}
+
+		.deleteButton {
+			background-color: #b50101 !important;
+			color: #fff;
+			border: none;
+			padding: 5px 10px;
+			border-radius: 3px;
+			cursor: pointer;
+			transition: background-color 0.2s ease;
+		}
+
+		/* Responsive Design for form */
+		form {
+			width: 100%;
+		}
+
+		input[type=text], input[type=password], input[type=number], select, input[type=submit]{
+			width: 100%;
+			padding: 12px 20px;
+			margin: 8px 0;
+			display: inline-block;
+			border: 1px solid #ccc;
+			box-sizing: border-box;
+		}
+
+		input[type=submit] {
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+
+	</style>
+	<script>
+
+	var sensors = [{active: true, name: "Temperatur", pinID: 1, class: "Temperatur", intervall: 1000},
+								{active: true, name: "Luftfeuchtigkeit", pinID: 2, class: "Luftfeuchtigkeit", intervall: 1000},
+								{active: true, name: "Licht", pinID: 3, class: "Licht", intervall: 1000},
+								{active: true, name: "Bewegung", pinID: 4, class: "Bewegung", intervall: 1000},
+								{active: true, name: "Feuer", pinID: 5, class: "Feuer", intervall: 1000}];
+
+	var actors = [
+		{active: false,name: "plugB",type: "Plug433Mhz_Actuator",collection: "Plugs433Mhz",initialState: false,config: {codeOn: 1361,codeOff: 1364,pulseLength: 320}},
+		{active: false,name: "plugC",type: "Plug433Mhz_Actuator",collection: "Plugs433Mhz",initialState: false,config: {codeOn: 1361,codeOff: 1364,pulseLength: 320}}
+	];
+
+		function toggleContainer(container) {
+			container.classList.toggle('active');
+		}
+
+		function activeSensor(){
+
+			console.log("activeSensor");
+
+			var container = document.getElementById("ActiveSensor");
+			var content = container.getElementsByClassName("content")[0];
+			//this json list is a place holder wiht the following format {active name pinID(1-5) class intervall}
+			var jsonList = sensors;
+
+			//fill the content with the jsonList as table
+			var table = document.createElement("table");
+			var row = table.insertRow(0);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			var cell5 = row.insertCell(4);
+			var cell6 = row.insertCell(5);
+			cell1.innerHTML = "Name";
+			cell2.innerHTML = "PinID";
+			cell3.innerHTML = "Class";
+			cell4.innerHTML = "Intervall";
+			cell5.innerHTML = "Active";
+			for (var i = 0; i < jsonList.length; i++) {
+				var row = table.insertRow(i+1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				var cell5 = row.insertCell(4);
+				var cell6 = row.insertCell(5);
+				cell1.innerHTML = jsonList[i].name;
+				cell2.innerHTML = jsonList[i].pinID;
+				cell3.innerHTML = jsonList[i].class;
+				cell4.innerHTML = jsonList[i].intervall;
+				var checkbox = document.createElement("input");
+				checkbox.type = "checkbox";
+				checkbox.checked = jsonList[i].active;
+
+				//if checkbox is changed the function updateSensor is called
+				// Create an IIFE to capture the current value of i
+				checkbox.onchange = (function(index) {
+					return function() {
+					updateSensor(index);
+					}
+				})(i);
+				cell5.appendChild(checkbox);
+
+				//the last cell contains a delete button which calls the function deleteSensor
+				var button = document.createElement("button");
+				button.innerHTML = "Delete";
+				button.classList.add("deleteButton");
+				button.onclick = (function(index) {
+					return function() {
+					deleteSensor(index);
+					}
+				})(i);
+				cell6.appendChild(button);
+
+
+				
+			}
+
+			content.appendChild(table);
+		}
+
+		function activeActors(){
+			
+			console.log("activeActors");
+
+			var container = document.getElementById("ActiveActors");
+			var content = container.getElementsByClassName("content")[0];
+			//this json list is a place holder wiht the following format {active name pinID(1-5) class intervall}
+			var jsonList = actors;
+
+			//fill the content with the jsonList as table
+			var table = document.createElement("table");
+			var row = table.insertRow(0);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			var cell5 = row.insertCell(4);
+			var cell6 = row.insertCell(5);
+			var cell7 = row.insertCell(6);
+			cell1.innerHTML = "Name";
+			cell2.innerHTML = "Type";
+			cell3.innerHTML = "Collection";
+			cell4.innerHTML = "Initial State";
+			cell5.innerHTML = "Config";
+			cell6.innerHTML = "Active";
+			for (var i = 0; i < jsonList.length; i++) {
+				var row = table.insertRow(i+1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				var cell5 = row.insertCell(4);
+				var cell6 = row.insertCell(5);
+				var cell7 = row.insertCell(6);
+				var test = jsonList[i];
+				cell1.innerHTML = jsonList[i].name;
+				cell2.innerHTML = jsonList[i].type;
+				cell3.innerHTML = jsonList[i].collection;
+				cell4.innerHTML = jsonList[i].initialState;
+				cell5.innerHTML = JSON.stringify(jsonList[i].config);
+				var checkbox = document.createElement("input");
+				checkbox.type = "checkbox";
+				checkbox.checked = jsonList[i].active;
+
+				//if checkbox is changed the function updateActor is called
+				// Create an IIFE to capture the current value of i
+				checkbox.onchange = (function(index) {
+					return function() {
+					updateActor(index);
+					}
+				})(i);
+				cell6.appendChild(checkbox);
+
+				//the last cell contains a delete button which calls the function deleteActor
+				var button = document.createElement("button");
+				button.innerHTML = "Delete";
+				button.classList.add("deleteButton");
+				button.onclick = (function(index) {
+					return function() {
+					deleteActor(index);
+					}
+				})(i);
+				cell7.appendChild(button);
+			}
+			content.appendChild(table);
+		}
+			
+		function deleteActor(i){
+			//ask user if he is sure in german optians are ja and nein
+			var sure = confirm("Sind Sie sicher?");
+			if (sure == true) {
+				//delete the sensor
+				console.log("deleteActor");
+				console.log(i);
+			} else {
+				//do nothing
+			}
+		}
+
+		function updateSensor(i){
+			console.log("updateSensor");
+			console.log(i);
+		}
+
+		function deleteSensor(i){
+			//ask user if he is sure in german optians are ja and nein
+			var sure = confirm("Sind Sie sicher?");
+			if (sure == true) {
+				//delete the sensor
+				console.log("deleteSensor");
+				console.log(i);
+			} else {
+				//do nothing
+			}
+		}
+
+		function fillClassDrowDown(){
+			//this function fills the dropdown menu with the classes of the sensors
+			//this is a place holder
+			var classes = ["Temperatur", "Luftfeuchtigkeit", "Licht", "Bewegung", "Feuer"];
+			var select = document.getElementById("class");
+			for (var i = 0; i < classes.length; i++) {
+				var option = document.createElement("option");
+				option.value = classes[i];
+				option.text = classes[i];
+				select.appendChild(option);
+			}
+		}
+
+		function createSensor(){
+			
+		}
+
+
+		//call activeSensor and fillClassDrowDown when the page is loaded
+		window.onload = function() {
+			activeSensor();
+			fillClassDrowDown();
+			activeActors();
+		}
+
+
+	</script>
+</head>
+<body>
+	<div id="ActiveSensor" class="container">
+		<h2>Sensoren bearbeiten</h2>
+		<button onclick="toggleContainer(this.parentNode)">Toggle</button>
+		<div class="content">
+		</div>
+	</div>
+
+	<div id="CreateSensor" class="container">
+		<h2>Sensor erstellen</h2>
+		<button onclick="toggleContainer(this.parentNode)">Toggle</button>
+		<div class="content">
+			<!--This form allows the user to create a new sensor like in list sensors. then the user submits the function createSensor is called instead of a reload of the page-->
+			<form action="javascript:createSensor()">
+				<label for="name">Name:</label><br>
+				<input type="text" id="name" name="name"><br>
+				<!--pinID is a number between 1-5-->
+				<label for "pinID">PinID:</label><br>
+				<input type="number" id="pinID" name="pinID" min="1" max="5"><br>
+				
+				<!--Klasse is a dropdown menu that is filled by the function fillClassDrowDown which is triggerd when user clicks on the dropdown menu-->
+				<label for="class">Klasse:</label><br>
+				<select id="class" name="class">
+					<option value="default">Bitte wählen</option>
+				</select><br>
+
+				<!--intervall is a floating point number-->
+				<label for="intervall">Intervall:</label><br>
+				<input type="number" id="intervall" name="intervall" step="0.1"><br>
+
+				<input type="submit" value="Submit">
+			</form>
+
+		</div>
+	</div>
+
+	<div id="ActiveActors" class="container">
+		<h2>Aktoren bearbeiten</h2>
+		<button onclick="toggleContainer(this.parentNode)">Toggle</button>
+		<div class="content">
+		</div>
+	</div>
+</body>
+</html>

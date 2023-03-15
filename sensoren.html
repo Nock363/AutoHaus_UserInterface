@@ -1,0 +1,222 @@
+<html>
+
+<head>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+	<script src="static/main.js"></script>
+	<script>
+		
+	</script>
+
+	<!-- <div class="mainMenu">
+		<svg class="burgerMenu">
+            <use xlink:href="#burgerMenu"/>
+        </svg>
+
+	</div> -->
+
+<div class="navigationBar extend shadow">
+	<script>
+
+		function triggerMainMenu(open){
+			if(open){
+				document.getElementsByClassName("burgerMenu")[0].classList.add("hide");
+				document.getElementsByClassName("xCross")[0].classList.remove("hide");
+				document.getElementById("navigationContent").classList.add("show");
+			}else{
+				document.getElementsByClassName("burgerMenu")[0].classList.remove("hide");
+				document.getElementsByClassName("xCross")[0].classList.add("hide");
+				document.getElementById("navigationContent").classList.remove("show");
+			}
+
+
+		}
+		document.addEventListener("DOMContentLoaded", function() {
+			const graph = document.getElementById("sensorGraph");
+			const line = document.getElementById("graphLine");
+
+			// Add data to the graph
+			const data = [
+				{ x: 0, y: 10 },
+				{ x: 1, y: 20 },
+				{ x: 2, y: 15 },
+				{ x: 3, y: 25 },
+				{ x: 4, y: 18 }
+			];
+
+			// Compute the maximum and minimum x and y values in the data
+			const maxX = Math.max(...data.map(point => point.x));
+			const minX = Math.min(...data.map(point => point.x));
+			const maxY = Math.max(...data.map(point => point.y));
+			const minY = Math.min(...data.map(point => point.y));
+
+			// Define the scaling factors for the x and y axes
+			const scaleX = graph.clientWidth / (maxX - minX);
+			const scaleY = graph.clientHeight / (maxY - minY);
+
+			// Build the SVG path for the data
+			const path = data.map(point => `${(point.x - minX) * scaleX},${graph.clientHeight - (point.y - minY) * scaleY}`).join(" ");
+
+			// Set the path attribute of the polyline element to the path for the data
+			line.setAttribute("points", path);
+
+			// Add zooming behavior to the graph
+			let isZooming = false;
+			let startX, startY, startTransform;
+			graph.addEventListener("mousedown", event => {
+				isZooming = true;
+				startX = event.clientX;
+				startY = event.clientY;
+				startTransform = graph.getAttribute("transform");
+			});
+			graph.addEventListener("mousemove", event => {
+				if (isZooming) {
+					const dx = event.clientX - startX;
+					const dy = event.clientY - startY;
+					const newTransform = `translate(${dx},${dy}) ${startTransform}`;
+					graph.setAttribute("transform", newTransform);
+				}
+			});
+			graph.addEventListener("mouseup", event => {
+				isZooming = false;
+			});
+		});
+	</script>
+
+
+	<div class="head">
+		<a href="/" class="title">Brainbox1</a>
+		<!-- <a href="/warenkorb" class="shoppingCart">Warenkorb({{cartSize}})</a> -->
+	
+		<div class="menuButton" >
+			<svg class="burgerMenu" onclick="triggerMainMenu(true)">
+				<use xlink:href="#burgerMenu"/>
+			</svg>
+			<svg class="xCross hide" onclick="triggerMainMenu(false)">
+				<use xlink:href="#xCross"/>
+			</svg>
+			<!-- <div class="burgerMenu" onclick="triggerMainMenu(true)">
+				<svg>
+					<use xlink:href="#burgerMenu"/>
+				</svg>
+			</div>
+			<div class="xCross hide" onclick="triggerMainMenu(false)">
+				<svg>
+					<use xlink:href="#xCross"/>
+				</svg>
+			</div> -->
+		</div>
+	</div>
+	
+	<div id="navigationContent" class="content">
+		<!-- {% for key,path in navigationPaths.items() %}
+			<a href="{{path}}" class="row">{{key}}</a>
+		{% endfor %} -->
+		
+	</div>
+
+
+
+</div>
+
+
+	<div class="content">
+		
+		<div class="module"><h1 class="headline">Sensoren</h1></div>
+		<div class="module shadow sensorDetails">
+
+			<div class="head">
+				<h1>Sensor 1</h1>
+				<p>Temperatur:<br> 20 Grad</p>
+				<p>Feuchtigkeit:<br> 50%</p>
+				<p>Luftdruck:<br> 1 Bar</p>
+
+			</div>
+
+			<!--Scrollable Graph which display the last sensor datas-->
+			<svg id="sensorGraph" viewBox="0 0 400 300" style="width:100%">
+				<polyline id="graphLine" fill="none" stroke="#0074D9" stroke-width="2" points="" />
+			</svg>
+			
+		</div>
+		
+
+	</div>
+
+<svg style="display: none;">
+
+
+	<symbol	width="100%"	height="100%"	viewBox="0 0 13.229166 18.520834" version="1.1" id="location">
+		<g
+			id="layer1">
+		   <path
+			  id="path10"
+			  style="fill-opacity:1;stroke-width:1.5947"
+			  d="M 25 0 C 11.192881 4.7369516e-15 0 11.192881 0 25 C 0 38.807119 25 69.966797 25 69.966797 C 25 69.966797 50 38.807119 50 25 C 50 11.192881 38.807119 0 25 0 z M 24.486328 12 A 12.5 12.5 0 0 1 24.5 12 A 12.5 12.5 0 0 1 37 24.5 A 12.5 12.5 0 0 1 24.5 37 A 12.5 12.5 0 0 1 12 24.5 A 12.5 12.5 0 0 1 24.486328 12 z "
+			  transform="scale(0.26458333)" />
+		 </g>
+	</symbol>
+
+	<symbol	width="100%" height="100%" viewBox="0 0 13.229166 13.229167" version="1.1" id="contact">
+   
+		<g
+			id="layer1">
+			<path
+				style="stroke-width:0.0174212;fill-opacity:1"
+				d="M 9.4994331,13.06685 C 9.1074362,13.015269 8.783915,12.918207 7.8441555,12.570213 6.771674,12.173071 6.3444833,11.965451 5.6493119,11.503486 4.2760541,10.590913 2.6423353,8.9573733 1.7252636,7.5798683 1.2914176,6.9282038 1.0645242,6.4765632 0.76254324,5.6635332 0.68424844,5.4527357 0.57038714,5.1469936 0.50952054,4.9841052 0.37492874,4.6239178 0.32916214,4.4805116 0.24904284,4.1679059 0.15836924,3.8141329 0.13249353,3.6166301 0.13229243,3.2768243 0.13195393,2.7029459 0.24385054,2.2486173 0.52704364,1.674071 0.79079319,1.1389716 1.1371341,0.68335804 1.4248545,0.49299647 1.6708594,0.33023537 2.437758,0.13229167 2.8223441,0.13229167 c 0.3193832,0 0.3227528,0.00387 0.8675112,1.00172103 0.4198963,0.7691204 0.6791794,1.2166185 0.8630365,1.4895146 0.2671947,0.3965967 0.3249593,0.5582389 0.26372,0.737966 C 4.7490816,3.559686 4.4969426,3.8248162 3.9855711,4.2353571 3.5595408,4.577385 3.3029253,4.822938 3.2283386,4.9599427 3.12121,5.1567269 3.1705123,5.3068971 3.5594227,5.9684046 4.1225473,6.9262354 4.5406357,7.4838186 5.160428,8.1035805 5.583276,8.5264075 5.9800944,8.8506717 6.5092556,9.2057883 6.758132,9.3728076 6.8534693,9.4312528 7.4250793,9.7672193 7.9105077,10.052533 8.0816881,10.098396 8.2662019,9.9925765 8.4357081,9.895363 8.7019001,9.6162331 9.0303055,9.1913329 9.2322688,8.9300275 9.5848719,8.5689402 9.7309598,8.4738193 c 0.1134517,-0.073871 0.1179587,-0.075145 0.264242,-0.074711 0.1341682,3.944e-4 0.1599722,0.00618 0.2620622,0.05876 0.06228,0.032075 0.219073,0.1304759 0.348426,0.2186686 0.291222,0.1985541 0.373066,0.2459572 1.372448,0.7949095 0.443439,0.2435781 0.858938,0.4823583 0.923331,0.5306236 0.156561,0.117345 0.1955,0.193462 0.195406,0.381955 -1.88e-4,0.340193 -0.170911,1.061139 -0.316243,1.335331 -0.118947,0.224406 -0.33261,0.427579 -0.726431,0.690761 -0.513872,0.343411 -1.130193,0.588265 -1.657568,0.658525 -0.224454,0.0299 -0.6629715,0.02903 -0.8971999,-0.0018 z"
+				id="path2792" />
+		</g>
+	</symbol>
+	
+	<symbol width="100%" height="100%" viewBox="0 0 13.229166 13.229167" version="1.1" id="burgerMenu">
+		<g
+		id="layer1">
+			<path
+			id="rect859"
+			style="fill:#000000;fill-opacity:1;stroke-width:0.427806"
+			d="M 0,0 V 3.1127453 H 13.229166 V 0 Z M 0,5.058211 V 8.1709562 H 13.229166 V 5.058211 Z m 0,5.058211 v 3.112745 h 13.229166 v -3.112745 z" />
+		</g>
+	</symbol>
+
+	<symbol  width="100%" height="100%" viewBox="0 0 13.229166 13.229167" version="1.1" id="xCross">
+		<g
+			id="layer1">
+			<path
+			id="rect920"
+			style="fill-opacity:1;stroke-width:0.345893"
+			d="M 2.8936304,0 0,2.8936303 3.7209528,6.6145832 0,10.335536 2.8936304,13.229166 6.6145833,9.5082134 10.335536,13.229166 13.229166,10.335536 9.5082143,6.6145832 13.229166,2.8936303 10.335536,0 6.6145833,3.7209528 Z" />
+		</g>
+	</symbol>
+
+	<symbol width="100%" height="100%" viewBox="0 0 13.229166 13.229167" version="1.1" id="arrow">
+		<g
+		   id="layer1">
+		  <path
+			 style="fill:none;stroke-width:2.238375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+			 d="M 3.7650834,1.1192501 C 9.4641267,6.6145819 9.4641267,6.6145819 9.4641267,6.6145819 L 3.7650834,12.109913"
+			 id="path44" />
+		</g>
+	  </symbol>
+
+
+	  <symbol width="100%" height="100%" viewBox="0 0 13.229166 13.229167" version="1.1" id="shoppingCart">
+		<g
+			id="layer1">
+			<path
+			style="stroke-width:0.0173452"
+			d="M 9.8052303,13.208494 C 9.2707901,13.097067 8.8477416,12.608811 8.782032,12.027583 8.707104,11.36481 9.1001115,10.72643 9.6918293,10.549758 c 0.1496504,-0.04468 0.5120137,-0.04428 0.6617667,7.43e-4 0.151362,0.0455 0.354492,0.159323 0.473728,0.265452 0.183385,0.163227 0.34714,0.444372 0.413765,0.710376 0.04544,0.181428 0.04137,0.513862 -0.0085,0.691029 -0.112769,0.400935 -0.341171,0.697946 -0.671765,0.873555 -0.234844,0.124748 -0.51339,0.168093 -0.7556356,0.117586 z M 4.182587,13.173504 C 3.8978591,13.107964 3.6146829,12.913333 3.4447002,12.666343 3.3504622,12.529412 3.2500792,12.304074 3.2122816,12.144612 c -0.03646,-0.153801 -0.03661,-0.458037 -3.29e-4,-0.622471 0.1927781,-0.873435 1.0814579,-1.303397 1.8222309,-0.881636 0.1563585,0.08902 0.380487,0.322801 0.4695559,0.489772 0.1900506,0.356272 0.230132,0.740056 0.1163789,1.114353 -0.058764,0.193358 -0.1043305,0.284783 -0.2237147,0.448862 -0.1468414,0.201815 -0.3755273,0.371136 -0.6099303,0.451599 -0.1470651,0.05048 -0.446759,0.06458 -0.603895,0.02841 z M 3.7400749,10.043529 C 3.5972595,10.001089 3.5195859,9.94695 3.3788031,9.7917028 3.2631453,9.664162 3.2324272,9.6158531 3.1520186,9.4350527 3.1001086,9.3183271 3.0334786,9.1282268 3.0012226,9.0048096 2.9511326,8.8131607 2.7655066,7.7783493 2.4634986,6.0071867 2.2293226,4.6338327 1.7843056,2.0642177 1.7244056,1.7395207 l -0.009,-0.04875 -0.573846,-0.0058 -0.57384598,-0.0058 -0.0946,-0.04874 c -0.175254,-0.09029 -0.337095,-0.299479 -0.407989,-0.527356 -0.04513,-0.14506605 -0.07403,-0.38427205 -0.06264,-0.51841805 0.01924,-0.226387 0.144974,-0.431988 0.322973,-0.528098 l 0.09336,-0.05041 0.88393798,-0.0051 c 0.579987,-0.0034 0.913157,0.0015 0.96891,0.01423 0.135421,0.0309 0.283,0.117666 0.378262,0.222388 0.173049,0.190232 0.248291,0.441639 0.341637,1.14150705 0.03535,0.265046 0.07344,0.545225 0.08464,0.62262 l 0.02037,0.140719 4.7493771,0.0048 c 4.4999483,0.0045 4.7545893,0.0065 4.8486423,0.03716 0.376835,0.122997 0.557946,0.376092 0.532158,0.743669 -0.01063,0.151491 -0.04135,0.262452 -0.250862,0.906041 -0.07,0.215037 -0.205364,0.640565 -0.300804,0.945618 -0.368605,1.17816 -0.573266,1.798216 -0.651252,1.9730685 -0.130401,0.2923771 -0.254597,0.4392893 -0.474608,0.5614177 -0.193961,0.1076679 0.03108,0.1017715 -3.895492,0.1020647 -1.9808337,1.442e-4 -3.6049342,0.0064 -3.6091116,0.013906 -0.0042,0.0075 0.032441,0.2959604 0.081373,0.6410196 0.048932,0.3450598 0.089135,0.6376107 0.089339,0.6501129 2.851e-4,0.018105 0.6843515,0.022829 3.3629743,0.0232 2.0358539,2.895e-4 3.4278753,0.00741 3.5280413,0.018047 0.271149,0.028809 0.433105,0.1410943 0.496415,0.3441633 0.0384,0.1231681 0.04789,0.2716469 0.02613,0.408968 -0.04163,0.2627572 -0.129968,0.4227489 -0.278068,0.5036086 l -0.07904,0.04315 -3.7224378,0.0035 c -3.1696951,0.0029 -3.7353338,-3.86e-4 -3.8092843,-0.02236 z"
+			id="path876" />
+		</g>
+	</symbol>
+
+
+</svg>
+</body>
+
+</html>
