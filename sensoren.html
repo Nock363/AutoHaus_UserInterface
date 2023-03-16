@@ -4,14 +4,126 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
 
 </head>
 
-<body>
+<body onload="init()">
 
-	<script src="static/main.js"></script>
 	<script>
 		
+		sensors = [];
+
+		function init(){
+			//get all sensor document elements
+			var sensorElements = document.getElementsByClassName("sensorDetails");
+			//create objects for each sensor
+			for(var i = 0; i < sensorElements.length; i++){
+				var domElement = sensorElements[i];
+				var name = domElement.id;
+				//get element chart in domElement
+				var ctx = domElement.getElementsByClassName("chart")[0].getContext('2d');
+				var chart = createEmptyChart(ctx)
+				var sensorData = getSensorData(name, 100);
+				sensors.push({name: name, domElement: domElement, chart:chart, sensorData: sensorData});
+
+			}
+			console.log("sensors: ", sensors);
+		}
+
+
+		function getSensorData(sensorName, valueCount){
+			//ToDo: Get data from server
+			//create dummy data
+			sensorData = {
+				name: sensorName,
+				time: [],
+				value: []
+			};
+
+			//Start time is 1 hour ago
+			var startTime = new Date();
+			startTime.setHours(startTime.getHours() - 1);
+
+			for(var i = 0; i < valueCount; i++){
+				var tempTime = new Date(startTime);
+				tempTime.setSeconds(tempTime.getSeconds() + i);
+				sensorData.time.push(tempTime);
+				sensorData.value.push(Math.random()*100);
+			}
+			return  sensorData;
+		}
+		
+		function createEmptyChart(ctx){
+			var chart = new Chart(ctx, {
+				type: 'line',
+				data: {},
+				options: {
+					plugins: {
+						zoom: {
+							zoom: {
+								wheel: {
+									enabled: true,
+								},
+								pinch: {
+									enabled: true
+								},
+								mode: 'xy',
+							}
+						}
+					}
+				}
+			});
+			return chart;
+		}
+	
+		function addRawDataToChart(chart,name,x,y){
+			var data = chart.data;
+			data.labels = x;
+			// var data = {
+			// 	labels: x,
+			// 	datasets: []
+			// };
+			dataset = {
+					label: name,
+					data: y,
+					borderColor: 'rgba(255, 99, 132, 1)',
+					backgroundColor: 'rgba(255, 99, 132, 0.2)'
+				};
+			data.datasets.push(dataset);
+			fillChartWithData(chart,data);
+
+		}
+
+		function fillChartWithData(chart, data){
+			chart.data = data;
+			chart.update();
+		}
+
+		function createRandomDummyData(n){
+			var data = {
+				labels: [],
+				datasets: []
+			};
+			labels = [];
+			dataset = {
+					label: 'Sales',
+					data: [],
+					borderColor: 'rgba(255, 99, 132, 1)',
+					backgroundColor: 'rgba(255, 99, 132, 0.2)'
+				};
+
+			for(var i = 0; i < n; i++){
+				labels.push(i);
+				dataset.data.push(Math.random()*100);
+			}
+			data.labels = labels;
+			data.datasets.push(dataset);
+			return data;
+		}
+
 	</script>
 
 	<!-- <div class="mainMenu">
@@ -37,56 +149,7 @@
 
 
 		}
-		document.addEventListener("DOMContentLoaded", function() {
-			const graph = document.getElementById("sensorGraph");
-			const line = document.getElementById("graphLine");
-
-			// Add data to the graph
-			const data = [
-				{ x: 0, y: 10 },
-				{ x: 1, y: 20 },
-				{ x: 2, y: 15 },
-				{ x: 3, y: 25 },
-				{ x: 4, y: 18 }
-			];
-
-			// Compute the maximum and minimum x and y values in the data
-			const maxX = Math.max(...data.map(point => point.x));
-			const minX = Math.min(...data.map(point => point.x));
-			const maxY = Math.max(...data.map(point => point.y));
-			const minY = Math.min(...data.map(point => point.y));
-
-			// Define the scaling factors for the x and y axes
-			const scaleX = graph.clientWidth / (maxX - minX);
-			const scaleY = graph.clientHeight / (maxY - minY);
-
-			// Build the SVG path for the data
-			const path = data.map(point => `${(point.x - minX) * scaleX},${graph.clientHeight - (point.y - minY) * scaleY}`).join(" ");
-
-			// Set the path attribute of the polyline element to the path for the data
-			line.setAttribute("points", path);
-
-			// Add zooming behavior to the graph
-			let isZooming = false;
-			let startX, startY, startTransform;
-			graph.addEventListener("mousedown", event => {
-				isZooming = true;
-				startX = event.clientX;
-				startY = event.clientY;
-				startTransform = graph.getAttribute("transform");
-			});
-			graph.addEventListener("mousemove", event => {
-				if (isZooming) {
-					const dx = event.clientX - startX;
-					const dy = event.clientY - startY;
-					const newTransform = `translate(${dx},${dy}) ${startTransform}`;
-					graph.setAttribute("transform", newTransform);
-				}
-			});
-			graph.addEventListener("mouseup", event => {
-				isZooming = false;
-			});
-		});
+		
 	</script>
 
 
@@ -129,7 +192,7 @@
 	<div class="content">
 		
 		<div class="module"><h1 class="headline">Sensoren</h1></div>
-		<div class="module shadow sensorDetails">
+		<div class="module shadow sensorDetails" id="Sensor1">
 
 			<div class="head">
 				<h1>Sensor 1</h1>
@@ -139,12 +202,25 @@
 
 			</div>
 
-			<!--Scrollable Graph which display the last sensor datas-->
-			<svg id="sensorGraph" viewBox="0 0 400 300" style="width:100%">
-				<polyline id="graphLine" fill="none" stroke="#0074D9" stroke-width="2" points="" />
-			</svg>
+			<canvas class="chart"></canvas>
+  	
+		<script>
+			// var ctx = document.getElementById('myChart').getContext('2d');
+			// var chart = createEmptyChart(ctx);
+			// x = [];
+			// y = [];
+			// for(var i = 0; i < 100; i++){
+			// 	x.push(i);
+			// 	y.push(Math.random()*100);
+			// }
+			// addRawDataToChart(chart,"Test 1",x,y);
+			// addRawDataToChart(chart,"Test 2",x,y);
+			// addRawDataToChart(chart,"Test 2",x,y);
 			
-		</div>
+
+		</script>
+			
+	</div>
 		
 
 	</div>
