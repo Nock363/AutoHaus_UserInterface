@@ -11,17 +11,9 @@
 		fetch('http://192.168.0.132:5000/data/DummySensor/100')
         .then(response => response.json())
         .then(data => {
-        // Daten für den Chart vorbereiten
-        const chartData = {
-            labels: [],
-            datasets: [{
-                label: 'Sinus',
-                data: [],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        };
+            console.log("collections: ", data);
+        }
+
 
         // Daten in das Chart-Format konvertieren
         data.forEach(entry => {

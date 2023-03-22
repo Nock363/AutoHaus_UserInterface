@@ -13,26 +13,101 @@
 <body onload="init()">
 
 	<script>
-		
-		sensors = [];
+		var offline = true;
 
-		function init(){
-			//get all sensor document elements
-			var sensorElements = document.getElementsByClassName("sensorDetails");
-			//create objects for each sensor
-			for(var i = 0; i < sensorElements.length; i++){
-				var domElement = sensorElements[i];
-				var name = domElement.id;
-				//get element chart in domElement
-				var ctx = domElement.getElementsByClassName("chart")[0].getContext('2d');
-				var chart = createEmptyChart(ctx)
-				var sensorData = getSensorData(name, 100);
-				sensors.push({name: name, domElement: domElement, chart:chart, sensorData: sensorData});
+		sensorElements = [];
 
+		async function fetchSensorData(sensorName, valueCount) {
+			try {
+				const response = await fetch('http://192.168.0.132:5000/data/'+ sensorName +'/' + valueCount);
+				const data = await response.json();
+				return data;
+			} catch (error) {
+				console.error('Fehler beim Abrufen der Sensor Daten:', error);
 			}
-			console.log("sensors: ", sensors);
+		}
+		
+		async function fetchSensors() {
+			try {
+				const response = await fetch('http://192.168.0.132:5000/sensors');
+				const data = await response.json();
+				var sensors = data;
+				var content = document.getElementsByClassName("content")[0];
+				//remove all elements with class sensorDetails from content
+				var sensorDetails = content.getElementsByClassName("sensorDetails");
+				while(sensorDetails.length > 0){
+					sensorDetails[0].parentNode.removeChild(sensorDetails[0]);
+				}
+				for(var i = 0; i < sensors.length; i++){
+					
+					//get sensor data
+					var sensorData = await fetchSensorData(sensors[i].name, 20);
+
+					var domElement = createSensorModul(sensors[i]);
+					var chart = domElement.getElementsByClassName("chart")[0].getContext('2d');
+
+					var sensor = {
+						domElement: domElement,
+						chart: chart
+					};
+
+
+					content.appendChild(domElement);
+					//add sensorModul to sensorElements
+					sensorElements.push(sensor);
+				}
+				console.log("content: ", content);
+
+			} catch (error) {
+				console.error('Fehler beim Abrufen der Sensoren:', error);
+			}
+		}
+		
+		function createSensorModul(sensorData){
+
+			//create dom element for
+			var head = document.createElement("div");
+			head.className = "head";
+			var h1 = document.createElement("h1");
+			h1.innerHTML = sensorData.name;
+			head.appendChild(h1);
+			//iterate through sensorData.data and create a div for each. Always with "name":"value" format
+			for(var key in sensorData.data){
+				var div = document.createElement("p");
+				div.innerHTML = key + ": " + sensorData.data[key];
+				head.appendChild(div);
+			}
+
+			var chart = document.createElement("canvas");
+			chart.className = "chart";
+
+			var sensorModul = document.createElement("div");
+			sensorModul.id = sensorData.name;
+			sensorModul.appendChild(head);
+			sensorModul.appendChild(chart);
+			sensorModul.className = "module shadow sensorDetails";
+
+			return sensorModul;
 		}
 
+
+
+		function init(){
+			// //get all sensor document elements
+			// var sensorElements = document.getElementsByClassName("sensorDetails");
+			// //create objects for each sensor
+			// for(var i = 0; i < sensorElements.length; i++){
+			// 	var domElement = sensorElements[i];
+			// 	var name = domElement.id;
+			// 	//get element chart in domElement
+			// 	var ctx = domElement.getElementsByClassName("chart")[0].getContext('2d');
+			// 	var chart = createEmptyChart(ctx)
+			// 	var sensorData = getSensorData(name, 100);
+			// 	sensors.push({name: name, domElement: domElement, chart:chart, sensorData: sensorData});
+
+			// }
+			// console.log("sensors: ", sensors);
+		}
 
 		function getSensorData(sensorName, valueCount){
 			//ToDo: Get data from server
@@ -126,72 +201,11 @@
 
 	</script>
 
-	<!-- <div class="mainMenu">
-		<svg class="burgerMenu">
-            <use xlink:href="#burgerMenu"/>
-        </svg>
-
-	</div> -->
-
-<div class="navigationBar extend shadow">
-	<script>
-
-		function triggerMainMenu(open){
-			if(open){
-				document.getElementsByClassName("burgerMenu")[0].classList.add("hide");
-				document.getElementsByClassName("xCross")[0].classList.remove("hide");
-				document.getElementById("navigationContent").classList.add("show");
-			}else{
-				document.getElementsByClassName("burgerMenu")[0].classList.remove("hide");
-				document.getElementsByClassName("xCross")[0].classList.add("hide");
-				document.getElementById("navigationContent").classList.remove("show");
-			}
-
-
-		}
-		
-	</script>
-
-
-	<div class="head">
-		<a href="/" class="title">Brainbox1</a>
-		<!-- <a href="/warenkorb" class="shoppingCart">Warenkorb({{cartSize}})</a> -->
-	
-		<div class="menuButton" >
-			<svg class="burgerMenu" onclick="triggerMainMenu(true)">
-				<use xlink:href="#burgerMenu"/>
-			</svg>
-			<svg class="xCross hide" onclick="triggerMainMenu(false)">
-				<use xlink:href="#xCross"/>
-			</svg>
-			<!-- <div class="burgerMenu" onclick="triggerMainMenu(true)">
-				<svg>
-					<use xlink:href="#burgerMenu"/>
-				</svg>
-			</div>
-			<div class="xCross hide" onclick="triggerMainMenu(false)">
-				<svg>
-					<use xlink:href="#xCross"/>
-				</svg>
-			</div> -->
-		</div>
-	</div>
-	
-	<div id="navigationContent" class="content">
-		<!-- {% for key,path in navigationPaths.items() %}
-			<a href="{{path}}" class="row">{{key}}</a>
-		{% endfor %} -->
-		
-	</div>
-
-
-
-</div>
-
 
 	<div class="content">
 		
 		<div class="module"><h1 class="headline">Sensoren</h1></div>
+		
 		<div class="module shadow sensorDetails" id="Sensor1">
 
 			<div class="head">
