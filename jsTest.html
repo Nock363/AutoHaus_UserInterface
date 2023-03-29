@@ -1,0 +1,70 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var templates = [];
+
+    var demoConfig = {
+        headline: "This is a headline",
+        // paragraph: "This is a paragraph"
+    };
+
+    function getAllTemplates(){
+        var templateElements = document.getElementsByClassName("template");
+        for(var i = 0; i < templateElements.length; i++){
+            //add copy of template to templates array and remove it from the dom
+            templates.push(templateElements[i].cloneNode(true));
+            templateElements[i].parentNode.removeChild(templateElements[i]);
+        }
+    }
+
+    function spawnTemplate(templateName,config){
+        var template = null;
+        for(var i = 0; i < templates.length; i++){
+            if(templates[i].id == templateName){
+                template = templates[i];
+                break;
+            }
+        }
+
+        //search for all placeholders and replace them with the given values
+        var placeholders = template.getElementsByClassName("placeholder");
+
+        //replace all placeholders with the given values from the config. if one key is not found as placeholder throw error
+        for(var i = 0; i < placeholders.length; i++){
+            var placeholder = placeholders[i];
+            var placeholderType = placeholder.getAttribute("data-type");
+            if(config[placeholderType] != null){
+                placeholder.innerHTML = config[placeholderType];
+            }else{
+                throw "Error: Placeholder with type " + placeholderType + " not found in config";
+            }
+        }
+
+        var newTemplate = template.cloneNode(true);
+        document.body.appendChild(newTemplate);
+    }
+
+    function init(){
+
+    }
+
+
+</script>
+
+<!--Html element with identifier to get detected from js as template-->
+<div class="template" id="infoTemplate">
+    <h1 class="placeholder" data-type="headline">_Headline_</h1>
+    <p class="placeholder" data-type="paragraph">_Paragraph_</p>
+    
+</div>
+
+
+</body>
+
+
+</html>

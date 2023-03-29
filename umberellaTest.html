@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UmbrellaJS Beispiel</title>
+  <script src="https://cdn.jsdelivr.net/npm/umbrellajs"></script>
+  <script>
+    function createAndAppendElement(tagName, text, className, id) {
+      var element = u('<' + tagName + '>');
+      if (text) {
+        element.text(text);
+      }
+      if (className) {
+        element.addClass(className);
+      }
+      if (id) {
+        element.attr('id', id);
+      }
+      u('body').append(element);
+      return element;
+    }
+
+    var myElement = createAndAppendElement('div', 'Hallo Welt!', 'meineKlasse', 'meinElement');
+
+    function update(text, className, id) {
+        console.log("update");
+        if (text) {
+        myElement.text(text);
+      }
+      if (className) {
+        myElement.removeClass('meineKlasse');
+        myElement.addClass(className);
+      }
+      if (id) {
+        myElement.attr('id', id);
+      }
+    }
+  </script>
+</head>
+<body>
+  <button onclick="update('Neuer Text', 'neueKlasse', 'neueId')">Aktualisieren</button>
+  <div id="meinElement" class="meineKlasse">Hallo Welt!</div>
+</body>
+</html>
