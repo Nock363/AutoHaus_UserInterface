@@ -236,11 +236,10 @@
 
 .baseList{
 	width: 100%;
-	box-sizing: border-box;
-	padding: 1%;
 	display: grid;
 	gap: var(--gap);
 	grid-template-columns: 1fr;
+	/*grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));*/
 	grid-auto-rows: minmax(min-content, max-content);
 }
 
@@ -267,9 +266,9 @@
 
 
 @media (min-width: 1200px) {
-	.baseList, .baseItem{
+	/* .baseList, .baseItem{
 		grid-template-columns: 1fr 1fr;
-	}
+	} */
 	.baseList {
 		grid-template-columns: 1fr 1fr;
 	}

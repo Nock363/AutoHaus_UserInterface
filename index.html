@@ -58,27 +58,17 @@
 		
 		</div>
 
-		<div class="module baseGrid actorList">
+		<div  class="module baseGrid actorList">
 
 			<h1>Actoren</h1>
 
-			<div class="baseItem manipulator actor shadow" style="">
-				<h2>Actor 1</h2>
-				<p>plugA</p>
-				<p class="isActive">actice</p>
-				<p>Last entry: 10.03.2023</p>
-				<p>Zustand: Aus</p>
+			<div v-for="actuator in actuators" :key="actuator.name" class="baseItem manipulator actor shadow">
+				<h2>{{actuator.name}}</h2>
+				<p>{{actuator.type}}</p>
+				<p>{{actuator.collectionSize}} Einträge</p>
 				
-				<p>4534 Entrys</p>
-			</div>
-
-			<div class="baseItem manipulator actor shadow" style="">
-				<h2>Actor 2</h2>
-				<p>plugA</p>
-				<p class="isActive">actice</p>
-				<p>Last entry: 10.03.2023</p>
-				<p>4534 Entrys</p>
-				<p>Zustand: Aus</p>
+				<p v-if="actuator.active == true" class="isActive">aktiv</p>
+				<p v-else class="isInActive">inaktiv</p>
 			</div>
 
 			<div class="baseItem shadow">
@@ -93,8 +83,10 @@
 
 			<h1>Logik</h1>
 
+			
+
 			<div class="baseItem manipulator logic shadow" style="">
-				<div class="baseInfos" >
+				<!-- <div class="baseInfos" >
 					<h2>Logik 1</h2>
 					<p>Binary Controller</p>
 					<p class="isActive">actice</p>
@@ -104,33 +96,31 @@
 					<p>Sensor 1</p>
 					<p>Sensor 2</p>
 					<p>Sensor 3</p>
-					<!-- <ul>
-						<li>Sensor 1</li>
-						<li>Sensor 2</li>
-						<li>Sensor 3</li>
-					</ul> -->
+					
 				</div>
 				<div class="connections">
 
 					<h3>Outputs</h3>
 					<p>Aktor 1</p>
 					<p>Aktor 2</p>
-					<p>Aktor 3</p>
+					<p>Aktor 3</p> 
 					
 					
 				</div>
-				
+				-->
 
 				<!--List of inpunts-->
 
 				
 			</div>
 
-			<div class="baseItem shadow">
+			<div class="baseItem manipulator logic shadow" style=""></div>
+
+			<!-- <div class="baseItem shadow">
 
 				<div class="addButton">+</div>
 
-			</div>
+			</div> -->
 
 		</div>
 		
@@ -145,22 +135,26 @@
 			return {
 			message: 'Hello Vue!',
 			subheadline: "This is a subheadline",
-			sensors: [] // create an empty array to store the sensor data
+			sensors: [], // create an empty array to store the sensor data
+			actuators: [], // create an empty array to store the sensor data
+			logics: [] // create an empty array to store the sensor data
 			}
 		},
 		mounted() {
 			// Call the fetchSensorData function when the Vue app is mounted
-			this.fetchSensorData();
+			this.fetchSystemData();
 		},
 		methods: {
-			fetchSensorData() {
+			fetchSystemData() {
 			// Fetch the sensor data from the server
-			fetch("http://192.168.0.132:5000/sensorsWithData/100")
+			fetch("http://192.168.0.132:5000/systemInfo")
 				.then(response => response.json()) // convert the response to JSON
 				.then(data => {
 				// Update the sensors array with the data from the server
-				
-				this.sensors = data;
+				console.log("data");
+				this.sensors = data.sensors;
+				this.actuators = data.actuators;
+				this.logics = data.logics;
 				console.log("sensors: " + this.sensors);
 				})
 				.catch(error => console.error(error)); // log any errors to the console
