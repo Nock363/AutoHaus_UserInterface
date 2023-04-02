@@ -301,6 +301,27 @@
 
 }
 
+.manipulator > .isInActive{
+	color: var(--negative-Color);
+	/*bold text*/
+	font-weight: bold;
+	/*place on bottom of the parent div*/
+	position: absolute;
+	bottom: 15px;
+	/*border on the bottom*/
+	/* border-bottom: 2px solid var(--positiv-Color); */
+
+}
+
+.manipulator > .chartLink
+{
+	position: absolute;
+	bottom: 15px;
+	right: 15px;
+	width: 100%;
+	text-align: right;
+}
+
 
 /*SensorList Ende	_________________________________________________________*/
 
