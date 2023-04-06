@@ -246,11 +246,15 @@
 .baseList > .baseItem{
 	
 	width: 100%;
+	box-sizing: border-box;
 	display: flex;
 	overflow: hidden;
 	flex-direction: row;
 	justify-content: space-between;
 	grid-row:span 2 / auto;
+	
+	
+
 }
 
 .baseList > h1{
@@ -270,7 +274,7 @@
 		grid-template-columns: 1fr 1fr;
 	} */
 	.baseList {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: repeat(2, 1fr);
 	}
 
 	.baseList > h1{
