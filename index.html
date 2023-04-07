@@ -28,7 +28,9 @@
 		<div class="module scheduler shadow">
 			<h1>Scheduler</h1>
 			<!-- <p class="isActive">running</p> -->
-			<button>Start</button>
+			<button @click="setScheduler(false)" v-if="scheduler.status == true" class="schedulerButton isOn">Stop</button>
+			<button @click="setScheduler(true)" v-else class="schedulerButton isOff">Start</button>
+			
 		</div>
 		<div class="module baseGrid sensorList">
 
@@ -40,7 +42,7 @@
 				<p>{{sensor.class}}</p>
 				<p>{{sensor.collectionSize}} Einträge</p>
 				
-				<a class="chartLink" :href="'http://192.168.0.132:5000/chart/' + sensor.collection">Chart</a>
+				<a class="chartLink" :href="url + '/chart/' + sensor.collection">Chart</a>
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
 			</div>
@@ -83,95 +85,24 @@
 
 			<h1>Logik</h1>
 
+			<div v-for="logic in logics" :key="logic.name" class="baseItem manipulator logic shadow">
 			
-
-			<div class="baseItem manipulator logic shadow" style="">
 				<div class="baseInfos" >
-					<h2>Logik 1</h2>
-					<p>Binary Controller</p>
-					<p class="isActive">actice</p>
+					<h2>{{logic.name}}</h2>
+					<p>{{logic.controller.controller}}</p>
+					<p v-if="logic.active == true" class="isActive">aktiv</p>
+					<p v-else class="isInActive">inaktiv</p>
 				</div>
 				<div class="connections">
 					<h3>Inputs</h3>
-					<p>Sensor 1</p>
-					<p>Sensor 2</p>
-					<p>Sensor 3</p>
+					<p v-for="input in logic.inputs" :key="input.input">{{input.sensor}}</p>
 					
 				</div>
 				<div class="connections">
-
 					<h3>Outputs</h3>
-					<p>Aktor 1</p>
-					<p>Aktor 2</p>
-					<p>Aktor 3</p> 
-					
-					
+					<p v-for="output in logic.outputs" :key="output.actuator">{{output.actuator}}</p>
 				</div>
 				
-
-				<!--List of inpunts-->
-
-				
-			</div>
-
-			<div class="baseItem manipulator logic shadow" style="">
-			
-				<div class="baseInfos" >
-					<h2>Logik 1</h2>
-					<p>Binary Controller</p>
-					<p class="isActive">actice</p>
-				</div>
-				<div class="connections">
-					<h3>Inputs</h3>
-					<p>Sensor 1</p>
-					<p>Sensor 2</p>
-					<p>Sensor 3</p>
-					
-				</div>
-				<div class="connections">
-
-					<h3>Outputs</h3>
-					<p>Aktor 1</p>
-					<p>Aktor 2</p>
-					<p>Aktor 3</p> 
-					
-					
-				</div>
-				
-
-			</div>
-
-			<div class="baseItem manipulator logic shadow" style="">
-			
-				<div class="baseInfos" >
-					<h2>Logik 1</h2>
-					<p>Binary Controller</p>
-					<p class="isActive">actice</p>
-				</div>
-				<div class="connections">
-					<h3>Inputs</h3>
-					<p>Sensor 1</p>
-					<p>Sensor 2</p>
-					<p>Sensor 3</p>
-					
-				</div>
-				<div class="connections">
-
-					<h3>Outputs</h3>
-					<p>Aktor 1</p>
-					<p>Aktor 2</p>
-					<p>Aktor 3</p> 
-					
-					
-				</div>
-				
-
-			</div>
-
-
-			<div class="baseItem manipulator logic shadow">
-
-				<div class="addButton">+</div>
 
 			</div>
 
@@ -183,15 +114,19 @@
 		
 		const { createApp } = Vue
 
+		const hostURL = "http://192.168.2.115:5000";
+
 		createApp({
 		data() {
 			return {
+			url : hostURL,
 			message: 'Hello Vue!',
 			subheadline: "This is a subheadline",
 			sensors: [], // create an empty array to store the sensor data
 			actuators: [], // create an empty array to store the sensor data
-			logics: [] // create an empty array to store the sensor data
-			}
+			logics: [], // create an empty array to store the sensor data
+			scheduler: {}
+		}
 		},
 		mounted() {
 			// Call the fetchSensorData function when the Vue app is mounted
@@ -200,7 +135,7 @@
 		methods: {
 			fetchSystemData() {
 			// Fetch the sensor data from the server
-			fetch("http://192.168.0.132:5000/systemInfo")
+			fetch(hostURL + "/systemInfo")
 				.then(response => response.json()) // convert the response to JSON
 				.then(data => {
 				// Update the sensors array with the data from the server
@@ -208,16 +143,49 @@
 				this.sensors = data.sensors;
 				this.actuators = data.actuators;
 				this.logics = data.logics;
+				this.scheduler = data.scheduler;
 				console.log("sensors: " + this.sensors);
-				})
+				console.log("scheduler: " + this.scheduler.status)
+			})
 				.catch(error => console.error(error)); // log any errors to the console
 			},
 
 			// chreate Link to chart for base path "http://192.168.0.132:5000/chart/"
-			createChartLink(collection){
-				return "http://192.168.0.132:5000/chart" + collection;
-			}	
 
+
+			setScheduler(status){
+
+				if(status == true){
+					var sureText = "Soll der Scheduler wirklich gestartet werden?";
+				}else{
+					var sureText = "Soll der Scheduler wirklich gestoppt werden?";
+				}	
+
+				if(confirm(sureText)){
+
+					if(status == true){
+						var url = hostURL + "/startScheduler";
+					}else{
+						var url = hostURL + "/stopScheduler";
+					}
+
+					//call url and reload page when call is successfull
+					fetch(url)
+						.then(response => response.json()) // convert the response to JSON
+						.then(data => {
+						// Update the sensors array with the data from the server
+						console.log("data");
+						console.log(data);
+						location.reload();
+					})
+						.catch(error => console.error(error)); // log any errors to the console
+					
+
+				}
+
+
+
+			}
 
 		}
 		}).mount('#app');

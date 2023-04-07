@@ -147,6 +147,19 @@
 	font-weight: bold;
 }
 
+.scheduler > .schedulerButton{
+
+}
+
+.scheduler > .isOn{
+	background-color: var(--positiv-Color);
+}
+
+.scheduler > .isOff{
+	background-color: var(--negative-Color);
+}
+
+
 
 /*Scheduler Ende___________________________________________________*/
 
@@ -263,6 +276,8 @@
 	grid-column: span 2 / auto;
 }
 
+
+
 .baseList > h2 {
 	width: 100%;
 	text-align: center;
@@ -280,7 +295,7 @@
 	.baseList > h1{
 		text-align: center;
 		/*Span over complete grid in width*/
-		grid-column: span 4 / auto;
+		grid-column: span 2 / auto;
 	}
 }
 
