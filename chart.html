@@ -11,10 +11,10 @@
   <script>
 
     //get data path from url
-    var url = new URL(window.location.href);
-    var dataPath = url.searchParams.get("data");
-    var chartSize = url.searchParams.get("size");
-    var fetchURL = "http://192.168.0.132:5000/data/" + dataPath + "/" + chartSize;
+    const urlParams = new URLSearchParams(window.location.search);
+    const collection = urlParams.get('collection');
+    var chartSize = urlParams.get('length');
+    var fetchURL = "/data/" + collection + "/" + chartSize;
 
     //load data from server
     fetch(fetchURL)

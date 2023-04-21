@@ -11,10 +11,7 @@
 </head>
 
 <body>
-
-	<script src="static/main.js"></script>
-	<script>
-		
+	
 	</script>
 
 	<!-- <div class="mainMenu">
@@ -42,7 +39,7 @@
 				<p>{{sensor.class}}</p>
 				<p>{{sensor.collectionSize}} Einträge</p>
 				
-				<a class="chartLink" :href="url + '/chart/' + sensor.collection">Chart</a>
+				<a class="chartLink" :href="url + 'chart.html?collection=' + sensor.collection + '&length=100'">Chart</a>
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
 			</div>
@@ -114,8 +111,8 @@
 		
 		const { createApp } = Vue
 
-		const hostURL = "http://192.168.2.115:5000";
-
+		// const hostURL = "http://192.168.2.115:5000";
+		const hostURL = "";
 		createApp({
 		data() {
 			return {
