@@ -13,6 +13,10 @@
     //get data path from url
     var url = new URL(window.location.href);
     
+    var maxLength = 20;
+
+    var updateInterval = 1;
+
     //url looks like http://192.168.0.200:5000/static/chart.html?collection=DummyCollection0&length=1000
     var collection = url.searchParams.get("collection");
     var length = url.searchParams.get("length");
@@ -56,7 +60,7 @@
                 console.log("collections: ", dataFromServer);
 
                 //Invert dataFromServer
-                dataFromServer = dataFromServer.reverse();
+                // dataFromServer = dataFromServer.reverse();
 
                 // Erstelle eine Liste von Labels
                 const labels = dataFromServer.map(datum => datum.time);
@@ -69,7 +73,8 @@
                         label: typ,
                         data: datenArray,
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        hidden: false
                     });
                 });
 
@@ -78,9 +83,31 @@
                         datasets: datasets
                 };
 
+                //only keep the last maxLength entries
+                if (data.labels.length > maxLength) {
+                    data.labels = data.labels.slice(data.labels.length - maxLength, data.labels.length);
+                    data.datasets.forEach(dataset => {
+                        dataset.data = dataset.data.slice(dataset.data.length - maxLength, dataset.data.length);
+                    });
+                }
+
+                //get which data is selected
+                var selectedData = [datasets.length];
+                for (var i = 0; i < datasets.length; i++) {
+                    selectedData[i] = chart.getDatasetMeta(i).hidden;
+                }
+
                 chart.data = data;
 
+                //update data selection
+                for (var i = 0; i < datasets.length; i++) {
+                    chart.getDatasetMeta(i).hidden = selectedData[i];
+                }
+
                 chart.update();
+
+                //update data selection
+            
 
                 //clear old chart
                 // if (window.myChart != undefined) {
@@ -92,102 +119,10 @@
 
     createChart(fetchURL);
 
-    //load data from server
-    // fetch(fetchURL)
-    // .then(response => response.json())
-    // .then(dataFromServer => {
-    //     console.log("collections: ", dataFromServer);
-
-        
-
-
-    //     //Invert dataFromServer
-    //     dataFromServer = dataFromServer.reverse();
-
-    //     // Erstelle eine Liste von Labels
-    //     const labels = dataFromServer.map(datum => datum.time);
-
-    //     // Erstelle eine Liste von Datensätzen für jeden Datentyp aus "data"
-    //     const datasets = [];
-    //     Object.keys(dataFromServer[0].data).forEach(typ => {
-    //     const datenArray = dataFromServer.map(datum => datum.data[typ]);
-    //     datasets.push({
-    //         label: typ,
-    //         data: datenArray,
-    //         borderColor: 'rgba(255, 99, 132, 1)',
-    //         backgroundColor: 'rgba(255, 99, 132, 0.2)'
-    //     });
-    //     });
-
-    //     var ctx = document.getElementById('myChart').getContext('2d');
-    //     var chart = new Chart(ctx, {
-    //         type: 'line',
-    //         data: {
-    //             labels: labels,
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             plugins: {
-    //                 zoom: {
-    //                     zoom: {
-    //                     wheel: {
-    //                         enabled: true,
-    //                     },
-    //                     pinch: {
-    //                         enabled: true
-    //                     },
-    //                     mode: 'xy',
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     });
-
-    // });
-
-
-    // function updateData(){
-    //     //call 10 elements from fetch url and add them to chart
-    //     fetch(updateURL)
-    //     .then(response => response.json())
-    //     .then(udpdateFromServer => {
-    //         console.log("udpdateFromServer: ", udpdateFromServer);
-    //         //get chart obcject from canvas with id myChart
-    //         var ctx = document.getElementById('myChart').getContext('2d');
-    //         var chart = Chart.getChart(ctx);
-            
-    //         const labels = udpdateFromServer.map(datum => datum.time);
-
-    //         const datasets = [];
-    //         Object.keys(udpdateFromServer[0].data).forEach(typ => {
-    //             const datenArray = udpdateFromServer.map(datum => datum.data[typ]);
-    //             datasets.push({
-    //                 label: typ,
-    //                 data: datenArray,
-    //                 borderColor: 'rgba(255, 99, 132, 1)',
-    //                 backgroundColor: 'rgba(255, 99, 132, 0.2)'
-    //             });
-    //         });
-    //         //get labels and data from chart
-    //         var chartLabels = chart.data.labels;
-    //         var chartData = chart.data.datasets[0].data;
-    //         //print them to console
-    //         console.log("chartLabels: ", chartLabels);
-    //         console.log("chartData: ", chartData);
-            
-    //         //set label and data to new values
-    //         chartLabels = labels;
-    //         chartData = datasets[0].data;
-
-
-
-    //         //update chart
-    //         chart.update();
-
-    //     });
-
-
-    // }
+    //update chart in updateInterval seconds
+    setInterval(function() {
+        createChart(updateURL);
+    }, updateInterval * 1000);
 
     
   </script>
