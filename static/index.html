@@ -40,7 +40,7 @@
 				<p>{{sensor.class}}</p>
 				<p>{{sensor.collectionSize}} Einträge</p>
 				
-				<a class="chartLink" :href="'http://192.168.0.132:5000/chart/' + sensor.collection">Chart</a>
+				<a class="chartLink" :href="'/static/chart.html?collection=' + sensor.collection + '&length=1000'">Chart</a>
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
 			</div>
@@ -147,7 +147,7 @@
 		methods: {
 			fetchSystemData() {
 			// Fetch the sensor data from the server
-			fetch("http://192.168.0.132:5000/systemInfo")
+			fetch("/systemInfo")
 				.then(response => response.json()) // convert the response to JSON
 				.then(data => {
 				// Update the sensors array with the data from the server
@@ -160,9 +160,9 @@
 				.catch(error => console.error(error)); // log any errors to the console
 			},
 
-			// chreate Link to chart for base path "http://192.168.0.132:5000/chart/"
+			// chreate Link to chart for base path "/chart/"
 			createChartLink(collection){
-				return "http://192.168.0.132:5000/chart" + collection;
+				return "/static/chart?collection" + collection + "&length=1000";
 			}	
 
 

@@ -41,14 +41,19 @@ class RestAPI():
       
         self.dummyData = []
         dummyDataCount = 10000
-        dummyValue = 10.0
-        startDateTime = datetime.datetime.now()
+        self.dummyValue1 = 10.0
+        self.dummyValue2 = 5.0
+        self.startDateTime = datetime.datetime.now()
         #add dummyData in style {"data":{"dummy":random},"timestamp":startDateTime} after that increment startDateTime by 10 seconds
         for i in range(dummyDataCount):
-            change = random.uniform(-0.5,0.5)
-            dummyValue = dummyValue + change
-            self.dummyData.append({"data":{"dummy":dummyValue},"timestamp":startDateTime})
-            startDateTime += datetime.timedelta(seconds=10)
+            change1 = random.uniform(-0.5,0.5)
+            self.dummyValue1 = self.dummyValue1 + change1
+
+            change2 = random.uniform(-0.5,0.5)
+            self.dummyValue2 = self.dummyValue2 + change2
+
+            self.dummyData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.startDateTime += datetime.timedelta(seconds=10)
 
 
         self.actuators = []
@@ -77,7 +82,18 @@ class RestAPI():
         self.__app.route("/startScheduler",methods=["GET"])(self.startScheduler)
         self.__app.route("/schedulerInfo",methods=["GET"])(self.getSchedulerInfo)
         self.__app.route("/systemInfo",methods=["GET"])(self.getSystemInfo)
-        
+
+
+    def addDataToDummyData(self,addCount):
+        for i in range(addCount):
+            change1 = random.uniform(-0.5,0.5)
+            self.dummyValue1 = self.dummyValue1 + change1
+
+            change2 = random.uniform(-0.5,0.5)
+            self.dummyValue2 = self.dummyValue2 + change2
+
+            self.dummyData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.startDateTime += datetime.timedelta(seconds=10)
 
     def getPins(self):
         # result = list(self.__mongoHandler.getAllPins())
@@ -90,7 +106,7 @@ class RestAPI():
         sensors = self.sensors
         for sensor in sensors:
             #add the last dummyDatas to the sensor as data 
-            sensor["data"] = self.dummyData[-int(length):]
+            sensor["data"] = self.dummyData[0:int(length)]
         return jsonify(sensors)
 
     def getActuators(self):
@@ -109,7 +125,8 @@ class RestAPI():
         return jsonify(result)
     
     def getDataFromCollection(self, collection:str, length : int):
-        result = list(self.__mongoHandler.getDataFromCollection(collection,int(length)))
+        self.addDataToDummyData(1)
+        result = self.dummyData[-int(length):]
         # for r in result:
         #     r.pop("_id")   
         return jsonify(result)

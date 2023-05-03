@@ -12,62 +12,182 @@
 
     //get data path from url
     var url = new URL(window.location.href);
-    var dataPath = url.searchParams.get("data");
-    var chartSize = url.searchParams.get("size");
-    var fetchURL = "http://192.168.0.132:5000/data/" + dataPath + "/" + chartSize;
+    
+    //url looks like http://192.168.0.200:5000/static/chart.html?collection=DummyCollection0&length=1000
+    var collection = url.searchParams.get("collection");
+    var length = url.searchParams.get("length");
+    var fetchURL = "/data/"+collection+"/" + length;
+    var updateURL = "/data/"+collection+"/" + 10;
+    console.log("fetchURL: ", fetchURL);
+    // var dataPath = url.searchParams.get("data");
+    // var chartSize = url.searchParams.get("size");
+    // var fetchURL = "/" + dataPath + "/" + chartSize;
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+    var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {},
+                    options: {
+                        animation: {
+                            duration: 0 // Set duration to 0 to disable animation
+                        },
+                        plugins: {
+                            zoom: {
+                                zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy',
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+    function createChart(url) {
+        fetch(url)
+            .then(response => response.json())
+            .then(dataFromServer => {
+                console.log("collections: ", dataFromServer);
+
+                //Invert dataFromServer
+                dataFromServer = dataFromServer.reverse();
+
+                // Erstelle eine Liste von Labels
+                const labels = dataFromServer.map(datum => datum.time);
+
+                // Erstelle eine Liste von Datensätzen für jeden Datentyp aus "data"
+                const datasets = [];
+                Object.keys(dataFromServer[0].data).forEach(typ => {
+                    const datenArray = dataFromServer.map(datum => datum.data[typ]);
+                    datasets.push({
+                        label: typ,
+                        data: datenArray,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)'
+                    });
+                });
+
+                var data = {
+                        labels: labels,
+                        datasets: datasets
+                };
+
+                chart.data = data;
+
+                chart.update();
+
+                //clear old chart
+                // if (window.myChart != undefined) {
+                //     window.myChart.destroy();
+                // }
+
+        });
+    }
+
+    createChart(fetchURL);
 
     //load data from server
-    fetch(fetchURL)
-    .then(response => response.json())
-    .then(dataFromServer => {
-        console.log("collections: ", dataFromServer);
+    // fetch(fetchURL)
+    // .then(response => response.json())
+    // .then(dataFromServer => {
+    //     console.log("collections: ", dataFromServer);
 
         
 
 
-        //Invert dataFromServer
-        dataFromServer = dataFromServer.reverse();
+    //     //Invert dataFromServer
+    //     dataFromServer = dataFromServer.reverse();
 
-        // Erstelle eine Liste von Labels
-        const labels = dataFromServer.map(datum => datum.time);
+    //     // Erstelle eine Liste von Labels
+    //     const labels = dataFromServer.map(datum => datum.time);
 
-        // Erstelle eine Liste von Datensätzen für jeden Datentyp aus "data"
-        const datasets = [];
-        Object.keys(dataFromServer[0].data).forEach(typ => {
-        const datenArray = dataFromServer.map(datum => datum.data[typ]);
-        datasets.push({
-            label: typ,
-            data: datenArray,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)'
-        });
-        });
+    //     // Erstelle eine Liste von Datensätzen für jeden Datentyp aus "data"
+    //     const datasets = [];
+    //     Object.keys(dataFromServer[0].data).forEach(typ => {
+    //     const datenArray = dataFromServer.map(datum => datum.data[typ]);
+    //     datasets.push({
+    //         label: typ,
+    //         data: datenArray,
+    //         borderColor: 'rgba(255, 99, 132, 1)',
+    //         backgroundColor: 'rgba(255, 99, 132, 0.2)'
+    //     });
+    //     });
 
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-                plugins: {
-                    zoom: {
-                        zoom: {
-                        wheel: {
-                            enabled: true,
-                        },
-                        pinch: {
-                            enabled: true
-                        },
-                        mode: 'xy',
-                        }
-                    }
-                }
-            }
-        });
+    //     var ctx = document.getElementById('myChart').getContext('2d');
+    //     var chart = new Chart(ctx, {
+    //         type: 'line',
+    //         data: {
+    //             labels: labels,
+    //             datasets: datasets
+    //         },
+    //         options: {
+    //             plugins: {
+    //                 zoom: {
+    //                     zoom: {
+    //                     wheel: {
+    //                         enabled: true,
+    //                     },
+    //                     pinch: {
+    //                         enabled: true
+    //                     },
+    //                     mode: 'xy',
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     });
 
-    });
+    // });
+
+
+    // function updateData(){
+    //     //call 10 elements from fetch url and add them to chart
+    //     fetch(updateURL)
+    //     .then(response => response.json())
+    //     .then(udpdateFromServer => {
+    //         console.log("udpdateFromServer: ", udpdateFromServer);
+    //         //get chart obcject from canvas with id myChart
+    //         var ctx = document.getElementById('myChart').getContext('2d');
+    //         var chart = Chart.getChart(ctx);
+            
+    //         const labels = udpdateFromServer.map(datum => datum.time);
+
+    //         const datasets = [];
+    //         Object.keys(udpdateFromServer[0].data).forEach(typ => {
+    //             const datenArray = udpdateFromServer.map(datum => datum.data[typ]);
+    //             datasets.push({
+    //                 label: typ,
+    //                 data: datenArray,
+    //                 borderColor: 'rgba(255, 99, 132, 1)',
+    //                 backgroundColor: 'rgba(255, 99, 132, 0.2)'
+    //             });
+    //         });
+    //         //get labels and data from chart
+    //         var chartLabels = chart.data.labels;
+    //         var chartData = chart.data.datasets[0].data;
+    //         //print them to console
+    //         console.log("chartLabels: ", chartLabels);
+    //         console.log("chartData: ", chartData);
+            
+    //         //set label and data to new values
+    //         chartLabels = labels;
+    //         chartData = datasets[0].data;
+
+
+
+    //         //update chart
+    //         chart.update();
+
+    //     });
+
+
+    // }
 
     
   </script>
