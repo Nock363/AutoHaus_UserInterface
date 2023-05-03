@@ -1,0 +1,175 @@
+<html>
+
+<head>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	
+
+	
+
+</head>
+
+<body>
+
+	<script src="static/main.js"></script>
+	<script>
+		
+	</script>
+
+	<!-- <div class="mainMenu">
+		<svg class="burgerMenu">
+            <use xlink:href="#burgerMenu"/>
+        </svg>
+
+	</div> -->
+	<div id="app" class="content">
+
+		<div class="module scheduler shadow">
+			<h1>Scheduler</h1>
+			<!-- <p class="isActive">running</p> -->
+			<button>Start</button>
+		</div>
+		<div class="module baseGrid sensorList">
+
+			<h1>Sensors</h1>
+
+			<!--iterate throug sensors[] and render for every part this sensor object-->
+			<div v-for="sensor in sensors" :key="sensor.name"  class="baseItem manipulator sensor shadow">
+				<h2>{{sensor.name}}</h2>
+				<p>{{sensor.class}}</p>
+				<p>{{sensor.collectionSize}} Einträge</p>
+				
+				<a class="chartLink" :href="'http://192.168.0.132:5000/chart/' + sensor.collection">Chart</a>
+				<p v-if="sensor.active == true" class="isActive">aktiv</p>
+				<p v-else class="isInActive">inaktiv</p>
+			</div>
+
+
+			<div class="baseItem shadow">
+
+				<div class="addButton">+</div>
+
+			</div>
+		
+			<!-- {% for param in module.params %} -->
+			
+			<!-- {% endfor %} -->
+		
+		</div>
+
+		<div  class="module baseGrid actorList">
+
+			<h1>Actoren</h1>
+
+			<div v-for="actuator in actuators" :key="actuator.name" class="baseItem manipulator actor shadow">
+				<h2>{{actuator.name}}</h2>
+				<p>{{actuator.type}}</p>
+				<p>{{actuator.collectionSize}} Einträge</p>
+				
+				<p v-if="actuator.active == true" class="isActive">aktiv</p>
+				<p v-else class="isInActive">inaktiv</p>
+			</div>
+
+			<div class="baseItem shadow">
+
+				<div class="addButton">+</div>
+
+			</div>
+
+		</div>
+
+			<div class="module baseList logikList">
+
+			<h1>Logik</h1>
+
+			
+
+			<div class="baseItem manipulator logic shadow" style="">
+				<!-- <div class="baseInfos" >
+					<h2>Logik 1</h2>
+					<p>Binary Controller</p>
+					<p class="isActive">actice</p>
+				</div>
+				<div class="connections">
+					<h3>Inputs</h3>
+					<p>Sensor 1</p>
+					<p>Sensor 2</p>
+					<p>Sensor 3</p>
+					
+				</div>
+				<div class="connections">
+
+					<h3>Outputs</h3>
+					<p>Aktor 1</p>
+					<p>Aktor 2</p>
+					<p>Aktor 3</p> 
+					
+					
+				</div>
+				-->
+
+				<!--List of inpunts-->
+
+				
+			</div>
+
+			<div class="baseItem manipulator logic shadow" style=""></div>
+
+			<!-- <div class="baseItem shadow">
+
+				<div class="addButton">+</div>
+
+			</div> -->
+
+		</div>
+		
+	</div>
+
+	<script>
+		
+		const { createApp } = Vue
+
+		createApp({
+		data() {
+			return {
+			message: 'Hello Vue!',
+			subheadline: "This is a subheadline",
+			sensors: [], // create an empty array to store the sensor data
+			actuators: [], // create an empty array to store the sensor data
+			logics: [] // create an empty array to store the sensor data
+			}
+		},
+		mounted() {
+			// Call the fetchSensorData function when the Vue app is mounted
+			this.fetchSystemData();
+		},
+		methods: {
+			fetchSystemData() {
+			// Fetch the sensor data from the server
+			fetch("http://192.168.0.132:5000/systemInfo")
+				.then(response => response.json()) // convert the response to JSON
+				.then(data => {
+				// Update the sensors array with the data from the server
+				console.log("data");
+				this.sensors = data.sensors;
+				this.actuators = data.actuators;
+				this.logics = data.logics;
+				console.log("sensors: " + this.sensors);
+				})
+				.catch(error => console.error(error)); // log any errors to the console
+			},
+
+			// chreate Link to chart for base path "http://192.168.0.132:5000/chart/"
+			createChartLink(collection){
+				return "http://192.168.0.132:5000/chart" + collection;
+			}	
+
+
+		}
+		}).mount('#app');
+	  </script>
+
+</body>
+
+</html>

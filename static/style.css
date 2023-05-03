@@ -1,0 +1,865 @@
+
+/*Module Imports*/
+
+
+:root{
+	--desktopWidth: 1200px;
+	--accent-Color: #ffffff;
+	/* --background-Color: #eeeeee; */
+	--positiv-Color: #0aca04;
+	--negative-Color: #ff3300;
+	--links-Color: #007cff;
+	--gap: 0.5rem;
+}
+		
+
+/*Navigation Bar Anfang___________________________________________________*/
+
+		.navigationBar{
+
+			transition: all 0.5s;
+
+		}
+
+		.navigationBar .head{
+			position: relative;
+			z-index: 5;
+			width: 100%;
+			box-sizing: border-box;
+			top: 0;
+			height: auto;
+			width: 100%;
+			background-color: var(--accent-Color, white);
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			padding: 3% 5%;
+		}
+
+		.navigationBar .content{
+			position: relative;
+			width: 100%;
+			max-height: 0;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			transition: all 0.5s;
+		}
+
+		.navigationBar .content .row{
+			
+			display: inline-block;
+			width: 100%;
+			color: black;
+			padding: var(--gap) ;
+			text-align: center;
+			font-weight: bold;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.navigationBar .content.show{
+			max-height: 50vh;
+		}
+
+		.navigationBar .head .menuButton{
+			position: relative;
+			font-size: 0;
+			height: 25;
+			width: 25;
+			padding-right: 5px;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		.navigationBar .head .menuButton svg{
+			
+			position: absolute;
+			height: 100%;
+			top: 0;
+			left: 0;
+			width: 100%;
+			z-index: 2;
+			transition: all 1s;
+		}
+
+		.navigationBar .head .title{
+
+			margin: 0;
+			line-height: 100%;
+			font-size: 30;
+			box-sizing: border-box;
+			font-weight: bold;
+			flex: 1;
+			color: black;
+			text-decoration: none;
+			z-index: 2;
+			
+		}
+
+		.navigationBar .head .shoppingCart{
+
+			margin: 0;
+			line-height: 100%;
+			font-size: 20;
+			height: 100%;
+			box-sizing: border-box;
+			flex: 1;
+			align-self:flex-end;
+			text-align: right;
+			color: black;
+		}
+
+		@media (min-width: 1200px) {
+
+			.navigationBar .head{
+				padding: 15px 15px;
+			}
+
+		}
+
+/*Navigation Bar Ende	___________________________________________________*/
+
+
+
+
+/*Scheduler Info___________________________________________________*/
+
+.scheduler{
+	/*Every element in this objects is orientaded horizontal first*/
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	padding: 0 5%;
+
+}
+
+.scheduler > h1{
+	text-align: center;
+}
+
+.scheduler > button{
+	padding: 10px;
+	font-size: 20;
+	font-weight: bold;
+}
+
+
+/*Scheduler Ende___________________________________________________*/
+
+
+/*BaseGrid Anfang_________________________________________________________*/
+.baseGrid{
+	width: 100%;
+	display: grid;
+	gap: var(--gap);
+	grid-template-columns: 1fr 1fr;
+	/*grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));*/
+	grid-auto-rows: minmax(min-content, max-content);
+}
+
+.baseGrid > .baseItem{
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-bet;
+	/*grid-row:span 2 / auto;*/
+	color: black;
+	height: clamp(180px,15vh,450px);
+	
+	
+}
+
+.baseGrid > h1{
+	text-align: center;
+	/*Span over complete grid in width*/
+	grid-column: span 2 / auto;
+}
+.baseGrid > p{
+	padding: 3vh;
+	width: 100%;
+}
+
+.baseItem > .addButton{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 10vh;
+	font-weight: bold;
+}
+
+.baseItem{
+	position: relative;
+	cursor: pointer;
+	background-color: white;
+	font-size: 17;
+	padding: 20px;
+}
+
+.baseItem > h1{
+	margin-bottom: 2px;
+}
+
+.baseGrid > h2 {
+	width: 100%;
+	text-align: center;
+}
+
+
+@media (min-width: 1200px) {
+
+	.baseGrid{
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	}
+
+	.baseGrid > .baseItem{
+		transition: all 0.5s;
+	}
+
+	.baseGrid > .baseItem:hover{
+		transform: scale(1.01);
+	}
+
+	.baseGrid > h1{
+		text-align: center;
+		/*Span over complete grid in width*/
+		grid-column: span 4 / auto;
+	}
+}
+/*BaseGrid Ende	_________________________________________________________*/
+
+/*BaseList Anfang_________________________________________________________*/
+
+.baseList{
+	width: 100%;
+	display: grid;
+	gap: var(--gap);
+	grid-template-columns: 1fr;
+	/*grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));*/
+	grid-auto-rows: minmax(min-content, max-content);
+}
+
+.baseList > .baseItem{
+	
+	width: 100%;
+	display: flex;
+	overflow: hidden;
+	flex-direction: row;
+	justify-content: space-between;
+	grid-row:span 2 / auto;
+}
+
+.baseList > h1{
+	text-align: center;
+	/*Span over complete grid in width*/
+	grid-column: span 2 / auto;
+}
+
+.baseList > h2 {
+	width: 100%;
+	text-align: center;
+}
+
+
+@media (min-width: 1200px) {
+	/* .baseList, .baseItem{
+		grid-template-columns: 1fr 1fr;
+	} */
+	.baseList {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.baseList > h1{
+		text-align: center;
+		/*Span over complete grid in width*/
+		grid-column: span 4 / auto;
+	}
+}
+
+/*BaseList Ende	_________________________________________________________*/
+
+/*SensorList Anfang_________________________________________________________*/
+
+.sensorList > p {
+	width: 100%;
+}
+
+.manipulator > .isActive{
+	color: var(--positiv-Color);
+	/*bold text*/
+	font-weight: bold;
+	/*place on bottom of the parent div*/
+	position: absolute;
+	bottom: 15px;
+	/*border on the bottom*/
+	/* border-bottom: 2px solid var(--positiv-Color); */
+
+}
+
+.manipulator > .isInActive{
+	color: var(--negative-Color);
+	/*bold text*/
+	font-weight: bold;
+	/*place on bottom of the parent div*/
+	position: absolute;
+	bottom: 15px;
+	/*border on the bottom*/
+	/* border-bottom: 2px solid var(--positiv-Color); */
+
+}
+
+.manipulator > .chartLink
+{
+	position: absolute;
+	bottom: 15px;
+	right: 15px;
+	width: 100%;
+	text-align: right;
+}
+
+
+/*SensorList Ende	_________________________________________________________*/
+
+/*LogicList Anfang	_________________________________________________________*/
+
+.logic > .baseInfos{
+	
+}
+
+.logic > connections{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	text-align: center;
+}
+
+.logic > .baseInfos > .isActive{
+	color: var(--positiv-Color);
+	/*bold text*/
+	font-weight: bold;
+	/*place on bottom of the parent div*/
+}
+
+/*LogicList Ende	_________________________________________________________*/
+
+
+
+/*BaseText Anfang_______________________________________________________*/
+
+.baseText{
+	text-align: center;
+	padding: 5px;
+	line-height: 1.5;
+	margin-bottom: 10px;
+	min-height: 100px;
+	
+	
+	
+}
+.baseText > h3{
+	margin: 5px;
+}
+
+@media (min-width: 1200px) {
+	.baseText{
+		grid-column: span 2 !important;
+	}
+}
+
+/*BaseText Ende__________________________________________________________*/
+
+/*BaseForm Anfang_______________________________________________________*/
+.baseForm{
+	text-align: center;
+	padding:  0 5%;	
+}
+
+
+.baseForm > input{
+	width: 100%;
+	border: none;
+	background-color: var(--formColor);
+	border-radius: 10px;
+	margin-bottom: 3%;
+	font-size: 15;
+	color:black;
+	padding:  3% 5%;
+	grid-column: span 2 !important;
+}
+
+.baseForm > input[type=submit]{
+	background-color: var(--positiv-Color);
+	color: white;
+}
+
+.baseForm > textarea{
+	width: 100%;
+	border: none;
+	background-color: var(--formColor);
+	border-radius: 10px;
+	margin-bottom: 3%;
+	font-size: 15;
+	color:black;
+	padding:  3% 5%;
+}
+
+@media (min-width: 1200px) {
+
+	.baseForm{
+		/* grid-column: span 2 !important; */
+		text-align: center;
+		padding:  0 10%;
+	
+	}
+
+	.baseForm > input{	
+		padding:  10px 5px;
+	}
+	
+}
+/*BaseForm Ende__________________________________________________________*/
+
+/*Searchbar Anfang________________________________________________________*/
+
+.searchBar{
+
+	
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-top: 0;
+	margin-bottom: 0;
+	
+}
+.searchBar > input{
+	background-color: white;
+	border: none;
+	opacity: 1;
+	
+}
+
+.searchBar > input[type=search]{
+	text-align: left;
+	width: 75%;
+	
+	
+	
+}
+
+.searchBar > input[type=submit]{
+	width: 24%;	
+	background-color: var(--positiv-Color);
+	border-radius: 0px;
+}
+
+@media (min-width: 1200px) {
+
+	.searchBar > input[type=search]{
+		
+		width: 85%;
+		
+		
+		
+	}
+	
+	.searchBar > input[type=submit]{
+		width: 14%;	
+		
+	}
+
+}
+/*Searchbar Ende__________________________________________________________*/
+
+/*Headline Anfang_________________________________________________________*/
+
+.headline{
+
+	text-align: center;
+	padding: 10px;
+	font-size: 30;
+	font-weight: bold;
+	background-color: rgba(0,0,0,0) !important;
+}
+
+
+/*Headline Ende____________________________________________________________*/
+
+/*BigHeadline Anfang_________________________________________________________*/
+
+.bigHeadline{
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	color: white;
+	height: clamp(25vw, 250px, 30vh);
+	background-size: cover;
+	background-position: center;
+	text-decoration: none;
+
+}
+
+.bigHeadline[data-with-image="False"]{
+	box-shadow:none !important;
+	height: auto;
+}
+
+.bigHeadline > h1{
+	font-size: clamp(100%,350%,450%);
+	font-weight: bold;
+	width: 100%;
+	text-align: center;
+	margin: 5px;
+	text-shadow: 2px 2px 3px #00000070;
+}
+
+.bigHeadline[data-with-image="False"] > h1{
+	color: black;
+	text-shadow: none;
+}
+
+.bigHeadline > h2{
+	padding: 0;
+	margin: 5px;
+	text-shadow: 2px 2px 3px #00000070;
+}
+
+.bigHeadline[data-with-image="False"] > h2{
+	color: black;
+	text-shadow: none;
+}
+/*BigHeadline Ende____________________________________________________________*/
+
+/*InformationButtons Anfang    ____________________________________________________*/
+
+.informationsButtons{
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+}
+
+.informationsButtons > .info{
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: var(--gap);
+	width: 100%;
+	height: clamp(200px,30vh,300px);
+	background-size: cover;
+	background-position: center;
+
+	box-shadow: inset 0px 0px 100px 100px rgba(0, 0, 0, .1);
+	transition: all 0.5s;
+
+}
+.informationsButtons > .info:hover{
+	background-size: 105%;
+	cursor: pointer;
+}
+
+.informationsButtons .info svg{
+
+	width: 4rem;
+	height: 4rem;
+	fill: var(--positiv-Color);
+	color: white;
+	filter: drop-shadow(1px 1px 3px rgba(58, 58, 58, 0.705))
+}
+
+.informationsButtons .info h2{
+	display: block;
+	width: auto;
+	color: white;
+	text-shadow: 3px 3px 4px rgba(58, 58, 58, 0.705)
+}
+
+@media (min-width: 1200px) {
+	.informationsButtons{
+		display: flex;
+		flex-direction: row;
+		gap: var(--gap);
+		justify-content: end;
+	}
+
+	.informationsButtons > .info{
+		clamp(200px,30vh,300px)
+	}
+
+	.informationsButtons .info h1{
+		display: block;
+		color: white;
+	}
+}
+
+/*InformationButtons Ende    ____________________________________________________*/
+
+
+.positiveBackgroundColor{
+	background-Color: var(--positiv-Color) !important;
+}
+
+
+.list{
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+}
+
+.list > .row{
+	width: 100%;
+	padding: 0.2rem 0.2rem;
+	box-sizing: border-box;
+}
+
+.list > .row > .head{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: var(--gap);
+	margin:  1rem 0.5rem;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: var(--background-Color);
+	overflow-x: hidden;
+}
+
+img{
+	object-fit: cover;
+}
+
+button{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 0.5rem 0;
+	transition: all 0.25s;
+	background-color: var(--positiv-Color);
+	color: white;
+	cursor: pointer;
+	
+}
+
+button:hover{
+	box-shadow: inset 0px 0px 25px 25px rgba(0,0,0,0.1) !important;
+}
+
+button:focus{
+	box-shadow: inset 0px 0px 25px 25px rgba(0,0,0,0.2) !important;
+}
+
+
+form{
+	width: 100%;
+}
+
+a{
+	color: var(--links-Color);
+}
+
+p{
+	margin-top: 2px;
+	margin-bottom: 2px;
+
+}
+
+h2{
+	grid-column: 1/-1;
+	width: 100%;
+	margin: 0;
+}
+
+h3{
+	margin: 0;
+}
+
+input{
+	padding: 15px;
+	box-sizing: border-box;
+	-webkit-appearance: none;
+}
+input[type=submit]{
+
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	background-color: var(--positiv-Color);
+	color: white;
+	cursor: pointer;
+}
+input[type=number]{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	padding-right: 0;
+}
+input[type=file]{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+}
+
+input[type=text]{
+	border:none;
+	box-shadow: inset 1px 0px 2px 2px rgba(0,0,0,0.1) !important;
+	border-radius: 2px;
+
+}
+
+input[type=textarea]{
+	resize: vertical;
+}
+
+input[type=button]{
+	font-weight: bold;
+}
+input[type=checkbox]:checked{
+	background-color: var(--positiv-Color);
+}
+
+textarea{
+	width: 100%;
+	
+	border-radius: 5px;
+	margin-bottom: 3%;
+	font-size: 15;
+	color:black;
+	padding:  3% 5%;
+	resize: vertical;
+}
+
+.hide{
+	/*display: none !important;*/
+	opacity: 0;
+	pointer-events: none;
+}
+
+body > .content{
+	margin:  2% auto auto auto;
+	/* margin-top: 20%; */
+	width: 98%;
+	margin: auto;
+	margin-top: var(--gap);
+	margin-bottom: 10%;
+	
+	
+	display: grid;
+	gap: var(--gap);
+	grid-template-columns: 1fr;
+	grid-template-rows: repeat(auto);
+	
+
+	grid-auto-rows: minmax(min-content, max-content);
+	/*grid-auto-rows: minmax(75px, 1fr);*/
+
+}
+
+.item{
+	background-color: white;
+	/*grid-row:span 2 / auto;*/
+	height: 20vh;
+	transition: all 1s;
+
+}
+
+.item.banner{
+	background-color: cornflowerblue;
+	grid-column: 1/-1;
+	grid-row:span 3 / auto;
+	
+}
+
+.item.big{
+	grid-row:span 3 / auto;
+	grid-column: span 2 / auto;
+}
+
+
+.item > .image{
+	/* background-position: center;
+	background-size: contain;
+	position: relative; */
+	height: 100%;
+	width: 100%;
+}
+
+.sensorDetails {
+	padding-left: 30px;
+	padding-right: 30px;
+	box-sizing: border-box;
+}
+
+.sensorDetails > .head {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--gap);
+	margin:  1rem 0.5rem;
+}
+
+.sensorDetails > .head > p {
+	text-align: center;
+	font-weight: bold;
+}
+
+
+.takeFullRow{
+	grid-column: 1/-1;
+
+}
+
+.shadow{
+	box-shadow: 2px 2px 3px 2px rgba(0,0,0,0.1);
+}
+
+.shadowInset{
+	box-shadow: inset .5px 1px 3px .5px rgba(0,0,0,0.15);
+}
+
+
+.module{
+	opacity: 0;
+	box-sizing: border-box;
+	background-color: white;
+	animation-name: moduleFadeIn;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	box-sizing: border-box;
+	/* padding: 10px; */
+}
+
+@keyframes moduleFadeIn {
+	from {opacity: 0;}
+	to {opacity: 1;}
+	
+	}
+
+/*Big screens*/
+@media (min-width: 1200px) {
+	
+	.module{
+		grid-column: 1/-1;
+	}
+
+	body > .content{
+		grid-template-columns: 1fr 1fr 1fr 1fr !important;
+		max-width: 1000px;
+		/* margin-top: 7%; */
+	}
+
+}
+
