@@ -13,7 +13,6 @@
     //get data path from url
     var url = new URL(window.location.href);
     
-    var maxLength = 20;
 
     var updateInterval = 1;
 
@@ -21,11 +20,17 @@
     var collection = url.searchParams.get("collection");
     var length = url.searchParams.get("length");
     var fetchURL = "/data/"+collection+"/" + length;
-    var updateURL = "/data/"+collection+"/" + 10;
+    //var updateURL = "/data/"+collection+"/" + 10;
+    var updateURL = fetchURL;
     console.log("fetchURL: ", fetchURL);
     // var dataPath = url.searchParams.get("data");
     // var chartSize = url.searchParams.get("size");
     // var fetchURL = "/" + dataPath + "/" + chartSize;
+
+    //length of data to be displayed
+    var maxLength = length;
+
+    console.log("maxLength: ", maxLength);
 
     var ctx = document.getElementById('myChart').getContext('2d');
 
