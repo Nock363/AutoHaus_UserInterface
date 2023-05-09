@@ -12,7 +12,6 @@
 
 <body>
 
-	<script src="static/main.js"></script>
 	<script>
 		
 	</script>
@@ -72,8 +71,8 @@
 				<p v-if="actuator.active == true">state: {{actuator.data[0].data.state}}</p>
 
 				<div class="controllButtons">
-					<button style="margin-right: 0.2rem;">On</button>
-					<button style="background-color: red;">Off</button>
+					<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
+					<button @click="setActuatorState(actuator.name, false)" style="background-color: red;">Off</button>
 				</div>
 				
 
@@ -95,7 +94,7 @@
 
 			
 
-			<div class="baseItem manipulator logic shadow" style="">
+			<div class="baseItem manipulator logic shadow">
 				<!-- <div class="baseInfos" >
 					<h2>Logik 1</h2>
 					<p>Binary Controller</p>
@@ -173,7 +172,24 @@
 			// chreate Link to chart for base path "/chart/"
 			createChartLink(collection){
 				return "/static/chart?collection" + collection + "&length=1000";
-			}	
+			},
+
+			async setActuatorState(name, state) {
+				try {
+					url = "/setActuator/" + name + "/" + state;
+					const response = await fetch(url);
+					const data = await response.json();
+					if (data.success !== true) {
+						this.error = data.error;
+					} else {
+						this.error = null;
+					}
+				} catch (error) {
+					this.error = error.message;
+					alert(error);
+				}
+			}
+	
 
 
 		}
