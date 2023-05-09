@@ -41,6 +41,7 @@
 				<p>{{sensor.collectionSize}} Einträge</p>
 				
 				<a class="chartLink" :href="'/static/chart.html?collection=' + sensor.collection + '&length=1000'">Chart</a>
+				
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
 			</div>
@@ -67,6 +68,15 @@
 				<p>{{actuator.type}}</p>
 				<p>{{actuator.collectionSize}} Einträge</p>
 				
+				
+				<p v-if="actuator.active == true">state: {{actuator.data[0].data.state}}</p>
+
+				<div class="controllButtons">
+					<button style="margin-right: 0.2rem;">On</button>
+					<button style="background-color: red;">Off</button>
+				</div>
+				
+
 				<p v-if="actuator.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
 			</div>

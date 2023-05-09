@@ -39,7 +39,8 @@ class RestAPI():
             self.sensors.append({"active":True,"class":"DummyClass","collection":"DummyCollection"+str(i),"intervall":1,"name":"DummySensor"+str(i),"pinID":i})
 
       
-        self.dummyData = []
+        self.dummySensorData = []
+        self.dummyActorrData = []
         dummyDataCount = 10000
         self.dummyValue1 = 10.0
         self.dummyValue2 = 5.0
@@ -52,8 +53,18 @@ class RestAPI():
             change2 = random.uniform(-0.5,0.5)
             self.dummyValue2 = self.dummyValue2 + change2
 
-            self.dummyData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+
+            randomState = random.randint(0,1)
+            if(randomState == 0):
+                randomState = False
+            else:
+                randomState = True
+
+            self.dummyActorrData.append({"data":{"state":randomState},"time":self.startDateTime})
+
             self.startDateTime += datetime.timedelta(seconds=10)
+
 
 
         self.actuators = []
@@ -92,7 +103,7 @@ class RestAPI():
             change2 = random.uniform(-0.5,0.5)
             self.dummyValue2 = self.dummyValue2 + change2
 
-            self.dummyData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
             self.startDateTime += datetime.timedelta(seconds=10)
 
     def getPins(self):
@@ -106,7 +117,7 @@ class RestAPI():
         sensors = self.sensors
         for sensor in sensors:
             #add the last dummyDatas to the sensor as data 
-            sensor["data"] = self.dummyData[0:int(length)]
+            sensor["data"] = self.dummySensorData[0:int(length)]
         return jsonify(sensors)
 
     def getActuators(self):
@@ -126,7 +137,7 @@ class RestAPI():
     
     def getDataFromCollection(self, collection:str, length : int):
         self.addDataToDummyData(1)
-        result = self.dummyData[-int(length):]
+        result = self.dummySensorData[-int(length):]
         # for r in result:
         #     r.pop("_id")   
         return jsonify(result)
@@ -159,13 +170,13 @@ class RestAPI():
         result = {}
         actuators = self.actuators
         for actuator in actuators:
-            actuator["data"] = self.dummyData[0:1]
-            actuator["collectionSize"] = len(self.dummyData)
+            actuator["data"] = self.dummyActorrData[0:1]
+            actuator["collectionSize"] = len(self.dummyActorrData)
 
         sensors = self.sensors
         for sensor in sensors:
-            sensor["data"] = self.dummyData[0:1]
-            sensor["collectionSize"] = len(self.dummyData)
+            sensor["data"] = self.dummySensorData[0:1]
+            sensor["collectionSize"] = len(self.dummySensorData)
 
         logics = self.logics
 

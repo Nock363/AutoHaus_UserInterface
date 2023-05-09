@@ -173,6 +173,12 @@
 	
 }
 
+.baseGrid > .baseItem > .controllButtons{
+	width: 100%;
+	display: flex;
+
+}
+
 .baseGrid > h1{
 	text-align: center;
 	/*Span over complete grid in width*/
@@ -645,12 +651,13 @@ button{
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
-	padding: 0.5rem 0;
+	padding: 0.5rem 1rem;
 	transition: all 0.25s;
 	background-color: var(--positiv-Color);
 	color: white;
 	cursor: pointer;
-	
+
+
 }
 
 button:hover{
@@ -659,6 +666,11 @@ button:hover{
 
 button:focus{
 	box-shadow: inset 0px 0px 25px 25px rgba(0,0,0,0.2) !important;
+}
+/*button turns black when clicked*/
+button:active{
+	background-color: black !important;
+	color: white;
 }
 
 
