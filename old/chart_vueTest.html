@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Vue Chart.js Example</title>
+  </head>
+  <body>
+    <div id="app">
+      <my-chart></my-chart>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-chartjs@3.4.0/dist/vue-chartjs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.4.1/dist/chart.min.js"></script>
+    <script type="module">
+      import { Bar } from 'vue-chartjs'
+      import Chart from 'chart.js/auto'
+
+      const MyChart = {
+        extends: Bar,
+        mounted () {
+          const chartData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [
+              {
+                label: 'Data One',
+                backgroundColor: '#f87979',
+                data: [40, 39, 10, 40, 39, 80, 40]
+              }
+            ]
+          }
+          
+          const options = {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+          
+          const chart = new Chart(this.$refs.chart, {
+            type: 'bar',
+            data: chartData,
+            options: options
+          })
+          
+          this.renderChart(chartData, options)
+        }
+      }
+
+      new Vue({
+        el: '#app',
+        components: {
+          'my-chart': MyChart
+        }
+      })
+    </script>
+  </body>
+</html>

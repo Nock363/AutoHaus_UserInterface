@@ -1,0 +1,73 @@
+<head>    
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+
+    <div id="chart_div"></div>
+
+<script>
+// Laden der Bibliothek
+google.charts.load('current', {'packages':['corechart']});
+
+// Funktion zum Zeichnen der Chart
+function drawChart() {
+  // Daten generieren
+  var data = new google.visualization.DataTable();
+  data.addColumn('number', 'X');
+  data.addColumn('number', 'Y');
+  for (var i = 0; i < 10000; i++) {
+    data.addRow([i, Math.random()]);
+  }
+
+  // Chart-Optionen festlegen
+  var options = {
+    title: '10,000 Data Points',
+    legend: { position: 'none' },
+    width: 800,
+    height: 400,
+    hAxis: { title: 'X', minValue: 0, maxValue: 10000 },
+    vAxis: { title: 'Y', minValue: 0, maxValue: 1 },
+    explorer: {
+      actions: ['dragToZoom', 'scrollToZoom', 'rightClickToReset'],
+      axis: 'horizontal',
+      keepInBounds: true,
+      maxZoomIn: 10
+    }
+  };
+
+  // Chart erstellen und in der HTML-Div anzeigen
+  var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+  chart.draw(data, options);
+  
+  // Maus-Eventlistener hinzufügen, um Zoom durch Scrollen zu ermöglichen
+  google.visualization.events.addListener(chart, 'onmousedown', function(e) {
+    if (e.button === 2) return; // Rechtsklick ignorieren
+    if (e.target.tagName !== 'svg' && e.target.tagName !== 'rect') return; // nur auf Diagramm scrollen
+    var container = chart.getContainer();
+    var chartArea = chart.getChartAreaBoundingBox();
+    var scrollFactor = e.deltaY > 0 ? 1.1 : 0.9; // Zoom-Faktor bestimmen
+    var startX = e.clientX - container.getBoundingClientRect().left;
+    var targetX = (startX - chartArea.left) / chartArea.width;
+    var axis = chart.getOption('hAxis'); // nur horizontale Achse zoomen
+    var min = axis.viewWindow.min + (axis.viewWindow.max - axis.viewWindow.min) * (targetX - axis.viewWindow.min) / (axis.viewWindow.max - axis.viewWindow.min);
+    var max = axis.viewWindow.max - (axis.viewWindow.max - axis.viewWindow.min) * (1 - targetX) / (axis.viewWindow.max - axis.viewWindow.min);
+    chart.setView({
+      'viewWindow': {
+        'min': min,
+        'max': max
+      }
+    });
+    chart.draw();
+  });
+}
+
+// Chart zeichnen, wenn die Bibliothek vollständig geladen ist
+google.charts.setOnLoadCallback(drawChart);
+
+
+</script>
+
+
+</body>
+

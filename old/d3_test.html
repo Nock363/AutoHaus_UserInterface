@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>d3 Zoom and Scrollable Line Chart Example</title>
+  <style>
+    .zoom {
+      cursor: move;
+      fill: none;
+      pointer-events: all;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 11px;
+    }
+  </style>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+  <div id="chart"></div>
+  <script>
+    // Daten generieren
+    var data = [];
+    for (var i = 0; i < 10000; i++) {
+      data.push({
+        x: i,
+        y: Math.random() * 600
+      });
+    }
+
+    // SVG-Element hinzufügen
+    var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        width = 800 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+
+    var svg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Skalierungen und Achsen definieren
+    var xScale = d3.scaleLinear()
+      .domain([0, 10000])
+      .range([0, width]);
+
+    var yScale = d3.scaleLinear()
+      .domain([0, 600])
+      .range([height, 0]);
+
+    var xAxis = d3.axisBottom(xScale)
+        .tickSizeOuter(0);
+
+    var yAxis = d3.axisLeft(yScale)
+        .tickSizeOuter(0);
+
+    // Linie definieren
+    var line = d3.line()
+      .x(function(d) { return xScale(d.x); })
+      .y(function(d) { return yScale(d.y); });
+
+    // Linie hinzufügen
+    svg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", line);
+
+    // Achsen hinzufügen
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Zoom hinzufügen
+    var zoom = d3.zoom()
+      .scaleExtent([1, 10])
+      .translateExtent([[0, 0], [width, height]])
+      .extent([[0, 0], [width, height]])
+      .on("zoom", zoomed);
+
+    svg.append("rect")
+      .attr("class", "zoom")
+      .attr("width", width)
+      .attr("height", height)
+      .call(zoom);
+
+    function zoomed() {
+      var newXScale = d3.event.transform.rescaleX(xScale);
+     
