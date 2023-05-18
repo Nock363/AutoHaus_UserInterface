@@ -875,3 +875,6 @@ body > .content{
 
 }
 
+.disabledButton{
+	opacity: 0.5;
+}

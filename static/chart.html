@@ -24,7 +24,7 @@
             <input type="datetime-local" class="shadowInset" id="startDate" name="startDate" value="2021-01-01T00:00" oninput="updateMovAvg">
             <label for="endDate">Start Date:</label>
             <input type="datetime-local" class="shadowInset" id="endDate" name="endDate" value="2021-01-01T00:00" oninput="updateMovAvg"> -->
-            <button style="float:right" onclick="setLiveUpdate()">Live update</button>
+            <button style="float:right" id="liveButton" onclick="setLiveUpdate()">Live update</button>
 
         </div>
         <div class="baseItem">
@@ -68,6 +68,20 @@
     // setToCurrentTime(startDateInput);
     // setToCurrentTime(endDateInput);
     
+    var liveButton = document.getElementById("liveButton");
+    var updateLive = true;
+
+
+    function setLiveUpdate(){
+        if(updateLive){
+            updateLive = false;
+            liveButton.classList.add("disabledButton");
+        }else{
+            updateLive = true;
+            liveButton.classList.remove("disabledButton");
+        }
+    }
+
     function setToCurrentTime(datetimeElement) {
         var now = new Date();
         var year = now.getFullYear();
@@ -255,7 +269,9 @@
 
     //update chart in updateInterval seconds
     setInterval(function() {
-        updateCharts(updateURL);
+        if(updateLive){
+            updateCharts(updateURL);
+        }
     }, updateInterval * 5000);
 
     
