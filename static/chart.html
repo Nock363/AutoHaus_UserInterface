@@ -65,7 +65,7 @@
                 console.log("collections: ", dataFromServer);
 
                 //Invert dataFromServer
-                // dataFromServer = dataFromServer.reverse();
+                dataFromServer = dataFromServer.reverse();
 
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
@@ -90,7 +90,7 @@
                 console.log("collections: ", dataFromServer);
 
                 //Invert dataFromServer
-                // dataFromServer = dataFromServer.reverse();
+                dataFromServer = dataFromServer.reverse();
 
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
@@ -217,9 +217,15 @@
     createCharts(fetchURL);
 
     //update chart in updateInterval seconds
+<<<<<<< HEAD
     // setInterval(function() {
     //     updateCharts(updateURL);
     // }, updateInterval * 1000);
+=======
+    setInterval(function() {
+        updateCharts(updateURL);
+    }, updateInterval * 5000);
+>>>>>>> 803c55a962dfa38d47ac1d79b5e4064b21c74c0f
 
     
   </script>
