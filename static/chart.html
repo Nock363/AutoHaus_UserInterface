@@ -20,7 +20,12 @@
         <div class="baseItem">
             <label for="movingAverageSlider">Moving Average:</label>
             <input type="number" class="shadowInset" id="movingAverageSlider" name="movingAverageSlider" min="1" max="100" value="1" step="1" oninput="updateMovAvg">
+            <!-- <label for="startDate">Start Date:</label>
+            <input type="datetime-local" class="shadowInset" id="startDate" name="startDate" value="2021-01-01T00:00" oninput="updateMovAvg">
+            <label for="endDate">Start Date:</label>
+            <input type="datetime-local" class="shadowInset" id="endDate" name="endDate" value="2021-01-01T00:00" oninput="updateMovAvg"> -->
             <button style="float:right" onclick="setLiveUpdate()">Live update</button>
+
         </div>
         <div class="baseItem">
             
@@ -56,7 +61,24 @@
     var chartsContainer = document.getElementById("charts");
     var charts = [];
 
+    // var startDateInput = document.getElementById("startDate");
+    // var endDateInput = document.getElementById("endDate");
+
+    // //update end date to current date
+    // setToCurrentTime(startDateInput);
+    // setToCurrentTime(endDateInput);
     
+    function setToCurrentTime(datetimeElement) {
+        var now = new Date();
+        var year = now.getFullYear();
+        var month = String(now.getMonth() + 1).padStart(2, '0'); // Monat beginnt bei 0, daher +1
+        var day = String(now.getDate()).padStart(2, '0');
+        var hours = String(now.getHours()).padStart(2, '0');
+        var minutes = String(now.getMinutes()).padStart(2, '0');
+
+        var dateTimeString = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        datetimeElement.value = dateTimeString;
+    }
 
     function createCharts(url) {
         fetch(url)
@@ -104,9 +126,24 @@
                 //update every chart with new data
                 for(var i = 0; i < datasets.length; i++){
                     
+                    //get which data is selected
+                    // var selectedData = [datasets.length];
+                    // for (var i = 0; i < datasets.length; i++) {
+                    //     selectedData[i] = chart.getDatasetMeta(i).hidden;
+                    // }
+
                     var movAvg = createMovAvgDataSet(datasets[i],movAvgLength);
                     charts[i].data.labels = labels;
+
+                    //safe old hidden state
+                    
+                    var dataHidden = (charts[i].getDatasetMeta(0).hidden == true);
+                    var avgHidden = (charts[i].getDatasetMeta(1).hidden == true);
                     charts[i].data.datasets = [datasets[i],movAvg];
+                    //restore old hidden state
+                    charts[i].getDatasetMeta(0).hidden = dataHidden;
+                    charts[i].getDatasetMeta(1).hidden = avgHidden;
+
                     charts[i].update();
                 }
 
@@ -166,7 +203,7 @@
                 borderColor: 'rgb(11 202 5)',
                 backgroundColor: 'rgb(11 202 5)',
                 hidden: false,
-                pointRadius: 1
+                pointRadius: 2
             });
         });
         return datasets;
@@ -217,15 +254,9 @@
     createCharts(fetchURL);
 
     //update chart in updateInterval seconds
-<<<<<<< HEAD
-    // setInterval(function() {
-    //     updateCharts(updateURL);
-    // }, updateInterval * 1000);
-=======
     setInterval(function() {
         updateCharts(updateURL);
     }, updateInterval * 5000);
->>>>>>> 803c55a962dfa38d47ac1d79b5e4064b21c74c0f
 
     
   </script>

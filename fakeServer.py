@@ -104,7 +104,7 @@ class RestAPI():
             self.dummyValue2 = self.dummyValue2 + change2
 
             self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
-            self.startDateTime += datetime.timedelta(seconds=10)
+            self.startDateTime += datetime.timedelta(seconds=60)
 
     def getPins(self):
         # result = list(self.__mongoHandler.getAllPins())
