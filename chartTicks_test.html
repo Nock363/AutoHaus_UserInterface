@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chart.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+</head>
+<body>
+  <canvas id="myChart"></canvas>
+  <script>
+    const chartConfig = {
+      type: 'line',
+      data: {
+        labels: ['2023-05-14 10:15:00', '2023-05-14 10:16:00', '2023-05-14 10:17:00', '2023-05-14 11:00:00', '2023-05-14 11:01:00', '2023-05-14 11:02:00'],
+        datasets: [
+          {
+            label: 'Example Dataset',
+            data: [10, 20, 30, 40, 50, 60],
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              displayFormats: {
+                hour: 'MMM D, YYYY h:mm a',
+                minute: 'h:mm a',
+              },
+              unit: 'minute',
+              round: 'minute',
+              parser: 'YYYY-MM-DD HH:mm:ss',
+            },
+            ticks: {
+              callback: function(value, index, values) {
+                // check if value is at the start of an hour
+                if (moment(value).minute() === 0 && moment(value).second() === 0) {
+                  return moment(value).format('MMM D, YYYY h:mm a');
+                }
+                else {
+                  return moment(value).format('h:mm:ss a');
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    const myChart = new Chart(document.getElementById('myChart'), chartConfig);
+  </script>
+</body>
+</html>

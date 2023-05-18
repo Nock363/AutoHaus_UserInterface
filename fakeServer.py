@@ -30,13 +30,13 @@ class RestAPI():
         pintCount = 5
         #add pins in style {"dataPin1":X,"dataPin2":X,"mode":"I2C","pinID":X}
         for i in range(pintCount):
-            self.pins.append({"dataPin1":i,"dataPin2":i,"mode":"I2C","pinID":i})
+            self.pins.insert(0,{"dataPin1":i,"dataPin2":i,"mode":"I2C","pinID":i})
 
         self.sensors = []
         sensorCount = 5
         #add sensors in style {"active":true,"class":"DummyClass","collection":"DummyCollectionX","intervall":1,"name":"DummySensorX","pinID":1}
         for i in range(sensorCount):
-            self.sensors.append({"active":True,"class":"DummyClass","collection":"DummyCollection"+str(i),"intervall":1,"name":"DummySensor"+str(i),"pinID":i})
+            self.sensors.insert(0,{"active":True,"class":"DummyClass","collection":"DummyCollection"+str(i),"intervall":1,"name":"DummySensor"+str(i),"pinID":i})
 
       
         self.dummySensorData = []
@@ -53,7 +53,7 @@ class RestAPI():
             change2 = random.uniform(-0.5,0.5)
             self.dummyValue2 = self.dummyValue2 + change2
 
-            self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.dummySensorData.insert(0,{"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
 
             randomState = random.randint(0,1)
             if(randomState == 0):
@@ -61,7 +61,7 @@ class RestAPI():
             else:
                 randomState = True
 
-            self.dummyActorrData.append({"data":{"state":randomState},"time":self.startDateTime})
+            self.dummyActorrData.insert(0,{"data":{"state":randomState},"time":self.startDateTime})
 
             self.startDateTime += datetime.timedelta(seconds=10)
 
@@ -71,14 +71,14 @@ class RestAPI():
         actuatorCount = 5
         #add actuators in style {"active":true,"collection":"DummyActuator","config":{},"initialState":false,"name":"DummyActuatorX","type":"Dummy_Actuator"}
         for i in range(actuatorCount):
-            self.actuators.append({"active":True,"collection":"DummyActuator"+str(i),"config":{},"initialState":False,"name":"DummyActuator"+str(i),"type":"Dummy_Actuator"})
+            self.actuators.insert(0,{"active":True,"collection":"DummyActuator"+str(i),"config":{},"initialState":False,"name":"DummyActuator"+str(i),"type":"Dummy_Actuator"})
         
 
         self.logics = []
         logicCount = 2
         #add logics in style {"active":true,"controller":{"config":{"invert":false,"threshold":0},"controller":"BinaryController"},"inputs":[{"input":"inX","parameter":"data","sensor":"InputSensorX"}],"name":"DummyLogikX","outputs":[{"actuator":"DummyActuatorX"}]}
         for i in range(logicCount):
-            self.logics.append({"active":True,"controller":{"config":{"invert":False,"threshold":0},"controller":"BinaryController"},"inputs":[{"input":"inX","parameter":"data","sensor":"InputSensorX"}],"name":"DummyLogikX","outputs":[{"actuator":"DummyActuatorX"}]})
+            self.logics.insert(0,{"active":True,"controller":{"config":{"invert":False,"threshold":0},"controller":"BinaryController"},"inputs":[{"input":"inX","parameter":"data","sensor":"InputSensorX"}],"name":"DummyLogikX","outputs":[{"actuator":"DummyActuatorX"}]})
 
 
         self.__app.route("/pins",methods=["GET"])(self.getPins)
@@ -103,7 +103,7 @@ class RestAPI():
             change2 = random.uniform(-0.5,0.5)
             self.dummyValue2 = self.dummyValue2 + change2
 
-            self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.dummySensorData.insert(0,{"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
             self.startDateTime += datetime.timedelta(seconds=10)
 
     def getPins(self):
@@ -152,7 +152,7 @@ class RestAPI():
     
     def getDataFromCollection(self, collection:str, length : int):
         self.addDataToDummyData(1)
-        result = self.dummySensorData[-int(length):]
+        result = self.dummySensorData[0:int(length)]
         # for r in result:
         #     r.pop("_id")   
         return jsonify(result)
