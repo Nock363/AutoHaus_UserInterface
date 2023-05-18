@@ -2,9 +2,12 @@
 <html>
 <head>
   <title>Chart.js Zoom Example</title>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -121,6 +124,14 @@
                     type: 'line',
                     data: {labels: labels, datasets: datasets},
                         options: {
+                            scales: {
+                                x: {
+                                    type: 'time',
+                                    time: {
+                                        unit: 'minute'
+                                    }
+                                }
+                            },
                             animation: {
                                 duration: 0 // Set duration to 0 to disable animation
                             },
@@ -154,14 +165,16 @@
                 data: datenArray,
                 borderColor: 'rgb(11 202 5)',
                 backgroundColor: 'rgb(11 202 5)',
-                hidden: false
+                hidden: false,
+                pointRadius: 1
             });
         });
         return datasets;
     }
 
     function createLabels(rawData){
-        return rawData.map(datum => datum.time);
+        
+        return rawData.map(datum => new Date(datum.time));
     }
 
     function createMovAvgDataSet(dataset,avgSize){
@@ -195,7 +208,8 @@
             data: outputData,
             borderColor: 'rgb(255 0 0)',
             backgroundColor: 'rgb(255 0 0)',
-            hidden: false
+            hidden: false,
+            pointRadius: 0.5
         };
         return outputDataSet;
     }
@@ -203,9 +217,9 @@
     createCharts(fetchURL);
 
     //update chart in updateInterval seconds
-    setInterval(function() {
-        updateCharts(updateURL);
-    }, updateInterval * 1000);
+    // setInterval(function() {
+    //     updateCharts(updateURL);
+    // }, updateInterval * 1000);
 
     
   </script>
