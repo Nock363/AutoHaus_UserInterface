@@ -12,14 +12,15 @@
 
   <style>
     .chart{
-        /* height: 30%; */
+        /* height: 800px; */
+        margin: 2.5% 1%;
     }
   </style>
 
 </head>
 <body>
   
-<div id="app" style="width:100%;max-width: 100%;" class="content">
+<div id="app" style="width:95%;max-width: 100%;" class="content">
 
 
     <div class="module shadow">
@@ -31,8 +32,20 @@
                 <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg">
                 <label for="movingAverageSlider">Datenmenge</label>
                 <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1" oninput="updateMovAvg">
+                <!--Dropdown selcet menu to select "Sekunde","Minute","Stunde","Tag"-->
+                <label for="timeUnit">Zeiteinheit:</label>
+
+                <select class="shadowInset" id="timeUnit" name="timeUnit" onchange="updateMovAvg()" >
+                    <option value="second">Sekunde</option>
+                    <option value="minute">Minute</option>
+                    <option value="hour">Stunde</option>
+                    <option value="day">Tag</option>
+                </select>
                 <input type="submit" class="submitButton" id="updateSubmitInput" name="updateSubmitInput" value="Updaten">
+                
+
                 <input type="button" style="float:right" id="liveButton" onclick="setLiveUpdate()" value="Live">
+                <a href="/index.html"><input type="button" style="float:right; margin-right: 5px;" id="homeButton" value="Home"></a>
                 
                 <!-- <button style="float:right;height:100%" id="liveButton" onclick="setLiveUpdate()">Live update</button> -->
 
@@ -63,13 +76,16 @@
     var collection = url.searchParams.get("collection");
     var length = url.searchParams.get("length");
     var avg = url.searchParams.get("avg");
+    var timeUnit = url.searchParams.get("timeUnit");
+
     var fetchURL = "/data/"+collection+"/" + (Number(length)+Number(avg));
     var updateURL = fetchURL;
-    console.log("fetchURL: ", fetchURL);
+    
 
     //update chartConfig
     document.forms["chartConfig"]["avg"].value = avg;
     document.forms["chartConfig"]["length"].value = length;
+    document.forms["chartConfig"]["timeUnit"].value = timeUnit;
 
     //length of data to be displayed
     var movAvgLength = avg;
@@ -208,7 +224,7 @@
                                 x: {
                                     type: 'time',
                                     time: {
-                                        unit: 'hour'
+                                        unit: timeUnit
                                     }
                                 }
                             },

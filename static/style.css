@@ -711,6 +711,7 @@ input{
 	padding: 15px;
 	box-sizing: border-box;
 	-webkit-appearance: none;
+	margin: 5px 0;
 }
 input[type=submit]{
 
@@ -763,6 +764,16 @@ input[type=button]{
 }
 input[type=checkbox]:checked{
 	background-color: var(--positiv-Color);
+}
+
+select{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	padding-right: 0;
+	padding: 15px;
+	box-sizing: border-box;
+	-webkit-appearance: none;
 }
 
 textarea{
