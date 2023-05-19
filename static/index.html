@@ -39,7 +39,7 @@
 				<p>{{sensor.class}}</p>
 				<p>{{sensor.collectionSize}} Einträge</p>
 				
-				<a class="chartLink" :href="'/static/chart.html?collection=' + sensor.collection + '&length=1000'">Chart</a>
+				<a class="chartLink" :href="'/static/chart.html?collection=' + sensor.collection + '&length=300&avg=10'">Chart</a>
 				
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p>
@@ -167,11 +167,6 @@
 				console.log("sensors: " + this.sensors);
 				})
 				.catch(error => console.error(error)); // log any errors to the console
-			},
-
-			// chreate Link to chart for base path "/chart/"
-			createChartLink(collection){
-				return "/static/chart?collection" + collection + "&length=1000";
 			},
 
 			async setActuatorState(name, state) {

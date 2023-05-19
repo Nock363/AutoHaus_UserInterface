@@ -2,13 +2,20 @@
 <html>
 <head>
   <title>Chart.js Zoom Example</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="chart.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1/dist/chartjs-plugin-zoom.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .chart{
+        /* height: 30%; */
+    }
+  </style>
+
 </head>
 <body>
   
@@ -17,27 +24,30 @@
 
     <div class="module shadow">
         <!--Slider to set moving average-->
-        <div class="baseItem">
-            <label for="movingAverageSlider">Moving Average:</label>
-            <input type="number" class="shadowInset" id="movingAverageSlider" name="movingAverageSlider" min="1" max="100" value="1" step="1" oninput="updateMovAvg">
+        <div class="baseItem configBar">
+
+            <form id="chartConfig">
+                <label for="movingAverageSlider">Moving Average:</label>
+                <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg">
+                <label for="movingAverageSlider">Datenmenge</label>
+                <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1" oninput="updateMovAvg">
+                <input type="submit" class="submitButton" id="updateSubmitInput" name="updateSubmitInput" value="Updaten">
+                <input type="button" style="float:right" id="liveButton" onclick="setLiveUpdate()" value="Live">
+                
+                <!-- <button style="float:right;height:100%" id="liveButton" onclick="setLiveUpdate()">Live update</button> -->
+
+            </form>
             <!-- <label for="startDate">Start Date:</label>
             <input type="datetime-local" class="shadowInset" id="startDate" name="startDate" value="2021-01-01T00:00" oninput="updateMovAvg">
             <label for="endDate">Start Date:</label>
             <input type="datetime-local" class="shadowInset" id="endDate" name="endDate" value="2021-01-01T00:00" oninput="updateMovAvg"> -->
-            <button style="float:right" id="liveButton" onclick="setLiveUpdate()">Live update</button>
-
-        </div>
-        <div class="baseItem">
             
         </div>
-
-
 
     </div>
     <div class="module shadow" id="charts">
     </div>
-    <canvas class="module shadow" id="myChart"></canvas>
-
+    
 </div>
   
   
@@ -52,12 +62,17 @@
     //url looks like http://192.168.0.200:5000/static/chart.html?collection=DummyCollection0&length=1000
     var collection = url.searchParams.get("collection");
     var length = url.searchParams.get("length");
-    var fetchURL = "/data/"+collection+"/" + length;
+    var avg = url.searchParams.get("avg");
+    var fetchURL = "/data/"+collection+"/" + (Number(length)+Number(avg));
     var updateURL = fetchURL;
     console.log("fetchURL: ", fetchURL);
 
+    //update chartConfig
+    document.forms["chartConfig"]["avg"].value = avg;
+    document.forms["chartConfig"]["length"].value = length;
+
     //length of data to be displayed
-    var movAvgLength = 10;
+    var movAvgLength = avg;
     var chartsContainer = document.getElementById("charts");
     var charts = [];
 
@@ -101,17 +116,21 @@
                 console.log("collections: ", dataFromServer);
 
                 //Invert dataFromServer
-                dataFromServer = dataFromServer.reverse();
+                // dataFromServer = dataFromServer.reverse();
 
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
+                labels = labels.slice(-length);
+                    
 
                 //create chart for each dataset
                 datasets.forEach(dataset => {
                     var movAvg = createMovAvgDataSet(dataset,movAvgLength);
+                    movAvg.data = movAvg.data.slice(-length);
+                    dataset.data = dataset.data.slice(-length);
                     var chartObject = createChartCanvas(dataset.name,labels,[dataset,movAvg]);
-                    chartsContainer.appendChild(chartObject.canvas);
+                    chartsContainer.appendChild(chartObject.element);
                     charts.push(chartObject.chart);
                 });
 
@@ -126,12 +145,14 @@
                 console.log("collections: ", dataFromServer);
 
                 //Invert dataFromServer
-                dataFromServer = dataFromServer.reverse();
+                // dataFromServer = dataFromServer.reverse();
 
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
+                labels = labels.slice(-length);
 
+                
                 if(datasets.length != charts.length){
                     throw "datasets and charts have different length";
                     return;
@@ -147,6 +168,9 @@
                     // }
 
                     var movAvg = createMovAvgDataSet(datasets[i],movAvgLength);
+                    movAvg.data = movAvg.data.slice(-length);
+                    datasets[i].data = datasets[i].data.slice(-length);
+                    
                     charts[i].data.labels = labels;
 
                     //safe old hidden state
@@ -167,9 +191,14 @@
 
     function createChartCanvas(name,labels,datasets) {
         var chartCanvas = document.createElement('canvas');
+        var chartElement = document.createElement("div");
+        chartElement.classList.add("chart");
+        chartElement.appendChild(chartCanvas);
         chartCanvas.id = name;
         //add chart to charts container
         var ctx = chartCanvas.getContext('2d');
+
+        
 
         var chart = new Chart(ctx, {
                     type: 'line',
@@ -179,7 +208,7 @@
                                 x: {
                                     type: 'time',
                                     time: {
-                                        unit: 'minute'
+                                        unit: 'hour'
                                     }
                                 }
                             },
@@ -187,22 +216,22 @@
                                 duration: 0 // Set duration to 0 to disable animation
                             },
                             plugins: {
-                                zoom: {
-                                    zoom: {
-                                    wheel: {
-                                        enabled: true,
-                                    },
-                                    pinch: {
-                                        enabled: true
-                                    },
-                                    mode: 'xy',
-                                    }
-                                }
+                                // zoom: {
+                                //     zoom: {
+                                //     wheel: {
+                                //         enabled: true,
+                                //     },
+                                //     pinch: {
+                                //         enabled: true
+                                //     },
+                                //     mode: 'xy',
+                                //     }
+                                // }
                             }
                         }
                     });
 
-        return {"canvas": chartCanvas, "chart": chart};
+        return {"canvas": chartCanvas, "chart": chart,"element":chartElement};
     }
 
     function createDataSets(rawData){
@@ -221,11 +250,6 @@
             });
         });
         return datasets;
-    }
-
-    function createLabels(rawData){
-        
-        return rawData.map(datum => new Date(datum.time));
     }
 
     function createMovAvgDataSet(dataset,avgSize){
@@ -264,6 +288,13 @@
         };
         return outputDataSet;
     }
+
+    function createLabels(rawData){
+        
+        return rawData.map(datum => new Date(datum.time));
+    }
+
+    
 
     createCharts(fetchURL);
 

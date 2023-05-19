@@ -50,7 +50,7 @@ class RestAPI():
             change1 = random.uniform(-0.5,0.5)
             self.dummyValue1 = self.dummyValue1 + change1
 
-            change2 = random.uniform(-0.5,0.5)
+            change2 = random.uniform(-0.3,0.3)
             self.dummyValue2 = self.dummyValue2 + change2
 
             self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
