@@ -143,7 +143,7 @@ class RestAPI():
         actuators = list(self.__configHandler.getActuators(onlyActive=False))
         for actuator in actuators:
             actuator["data"] = list(self.__mongoHandler.getDataFromCollection(actuator["collection"],int(length)))
-            actuator["collectionSize"] = self.__mongoHandler.getCollectionSize(actuator["collection"])
+            actuator["collectionSize"] = self.__mongoHandler.getDataStackSize(actuator["collection"])
         return jsonify(actuators)
 
     def getLogics(self):

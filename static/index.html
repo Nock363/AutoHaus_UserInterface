@@ -33,7 +33,6 @@
 
 			<h1>Sensors</h1>
 
-			<!--iterate throug sensors[] and render for every part this sensor object-->
 			<div v-for="sensor in sensors" :key="sensor.name"  class="baseItem manipulator sensor shadow">
 				<h2>{{sensor.name}}</h2>
 				<p>{{sensor.class}}</p>
@@ -51,10 +50,7 @@
 				<div class="addButton">+</div>
 
 			</div>
-		
-			<!-- {% for param in module.params %} -->
-			
-			<!-- {% endfor %} -->
+
 		
 		</div>
 
@@ -66,9 +62,8 @@
 				<h2>{{actuator.name}}</h2>
 				<p>{{actuator.type}}</p>
 				<p>{{actuator.collectionSize}} Einträge</p>
-				
-				
-				<p v-if="actuator.active == true">state: {{actuator.data[0].data.state}}</p>
+				<!-- <p>{{actuator}}</p> -->
+				<p v-if="actuator.active == true">state: {{actuator.data[0].state}} </p>
 
 				<div class="controllButtons">
 					<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
