@@ -145,18 +145,26 @@
 
     function createDataSets(rawData){
 
-        // Erstelle eine Liste von Datensätzen für jeden Datentyp aus "data"
+        //raw data is list of objects with structure {id: XXX, time: TIME_AS_STRING, value1: VALUE1, value2: VALUE2, ... }
+
         const datasets = [];
-        Object.keys(rawData[0].data).forEach(typ => {
-            const datenArray = rawData.map(datum => datum.data[typ]);
-            datasets.push({
-                label: typ,
-                data: datenArray,
-                borderColor: 'rgb(11 202 5)',
-                backgroundColor: 'rgb(11 202 5)',
+
+        //get all keys except id and time
+        const keys = Object.keys(rawData[0]).filter(key => key !== "id" && key !== "time");
+
+        //create dataset for each key
+        keys.forEach(key => {
+            var dataset = {
+                label: key,
+                data: rawData.map(data => data[key]),
+                borderColor: 'rgb(0 0 255)',
+                backgroundColor: 'rgb(0 0 255)',
                 hidden: false
-            });
+            };
+            datasets.push(dataset);
         });
+
+
         return datasets;
     }
 
@@ -205,7 +213,7 @@
     //update chart in updateInterval seconds
     setInterval(function() {
         updateCharts(updateURL);
-    }, updateInterval * 5000);
+    }, updateInterval * 500);
 
     
   </script>
