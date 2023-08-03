@@ -28,6 +28,7 @@
         <div class="baseItem configBar">
 
             <form id="chartConfig">
+                <input type="hidden" name="sensor">
                 <label for="movingAverageSlider">Moving Average:</label>
                 <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg">
                 <label for="movingAverageSlider">Datenmenge</label>
@@ -77,12 +78,13 @@
     var avg = url.searchParams.get("avg");
     var timeUnit = url.searchParams.get("timeUnit");
 
-    http://192.168.0.17:5000/sensorHistory?sensor=Arduino&length=10    
+    //http://192.168.0.17:5000/sensorHistory?sensor=Arduino&length=10    
     var fetchURL = "/sensorHistory?sensor="+sensor+"&length=" + (Number(length)+Number(avg));
     var updateURL = fetchURL;
     
 
     //update chartConfig
+    document.forms["chartConfig"]["sensor"].value = sensor;
     document.forms["chartConfig"]["avg"].value = avg;
     document.forms["chartConfig"]["length"].value = length;
     document.forms["chartConfig"]["timeUnit"].value = timeUnit;
