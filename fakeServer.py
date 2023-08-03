@@ -50,7 +50,7 @@ class RestAPI():
             change1 = random.uniform(-0.5,0.5)
             self.dummyValue1 = self.dummyValue1 + change1
 
-            change2 = random.uniform(-0.5,0.5)
+            change2 = random.uniform(-0.3,0.3)
             self.dummyValue2 = self.dummyValue2 + change2
 
             self.dummySensorData.insert(0,{"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
@@ -103,8 +103,8 @@ class RestAPI():
             change2 = random.uniform(-0.5,0.5)
             self.dummyValue2 = self.dummyValue2 + change2
 
-            self.dummySensorData.insert(0,{"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
-            self.startDateTime += datetime.timedelta(seconds=10)
+            self.dummySensorData.append({"data":{"dummy1":self.dummyValue1,"dummy2":self.dummyValue2},"time":self.startDateTime})
+            self.startDateTime += datetime.timedelta(seconds=60)
 
     def getPins(self):
         # result = list(self.__mongoHandler.getAllPins())
@@ -143,7 +143,7 @@ class RestAPI():
         actuators = list(self.__configHandler.getActuators(onlyActive=False))
         for actuator in actuators:
             actuator["data"] = list(self.__mongoHandler.getDataFromCollection(actuator["collection"],int(length)))
-            actuator["collectionSize"] = self.__mongoHandler.getCollectionSize(actuator["collection"])
+            actuator["collectionSize"] = self.__mongoHandler.getDataStackSize(actuator["collection"])
         return jsonify(actuators)
 
     def getLogics(self):

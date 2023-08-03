@@ -151,6 +151,15 @@
 /*Scheduler Ende___________________________________________________*/
 
 
+/*ConfigBar Anfang_________________________________________________*/
+.configBar{
+	height: auto;
+}
+
+
+/*ConfigBar Ende___________________________________________________*/
+
+
 /*BaseGrid Anfang_________________________________________________________*/
 .baseGrid{
 	width: 100%;
@@ -702,6 +711,7 @@ input{
 	padding: 15px;
 	box-sizing: border-box;
 	-webkit-appearance: none;
+	margin: 5px 0;
 }
 input[type=submit]{
 
@@ -723,6 +733,20 @@ input[type=file]{
 	border: none;
 	border-radius: 5px;
 }
+input[type=button]{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	background-color: var(--positiv-Color);
+	color: white;
+	cursor: pointer;
+	transition: all 0.25s;
+}
+
+input[type=button]:hover{
+	box-shadow: inset 0px 0px 25px 25px rgba(0,0,0,0.1) !important;
+}
+
 
 input[type=text]{
 	border:none;
@@ -740,6 +764,16 @@ input[type=button]{
 }
 input[type=checkbox]:checked{
 	background-color: var(--positiv-Color);
+}
+
+select{
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+	padding-right: 0;
+	padding: 15px;
+	box-sizing: border-box;
+	-webkit-appearance: none;
 }
 
 textarea{
@@ -875,3 +909,6 @@ body > .content{
 
 }
 
+.disabledButton{
+	opacity: 0.5;
+}
