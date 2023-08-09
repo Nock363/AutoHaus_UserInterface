@@ -36,7 +36,7 @@
 			<div v-for="sensor in sensors" :key="sensor.name"  class="baseItem manipulator sensor shadow">
 				<h2>{{sensor.name}}</h2>
 				<p>{{sensor.class}}</p>
-				<p>{{sensor.collectionSize}} Einträge</p>
+				<p>{{sensor.datastackSize}} Einträge</p>
 				
 				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&length=300&avg=10'">Chart</a>				
 				<p v-if="sensor.active == true" class="isActive">aktiv</p>
@@ -60,9 +60,9 @@
 			<div v-for="actuator in actuators" :key="actuator.name" class="baseItem manipulator actor shadow">
 				<h2>{{actuator.name}}</h2>
 				<p>{{actuator.type}}</p>
-				<p>{{actuator.collectionSize}} Einträge</p>
+				<p>{{actuator.datastackSize}} Einträge</p>
 				<!-- <p>{{actuator}}</p> -->
-				<p v-if="actuator.active == true">state: {{actuator.data[0].state}} </p>
+				<p v-if="actuator.active == true">state: {{ actuator.state }} </p>
 
 				<div class="controllButtons">
 					<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
@@ -157,6 +157,25 @@
 				console.log("data");
 				this.sensors = data.sensors;
 				this.actuators = data.actuators;
+				for (let i = 0; i < this.actuators.length; i++) {
+					//add state to actuators. true= "active",false= "inactive",no data= "unknown"
+					if(this.actuators[i].data.length == 0){
+						this.actuators[i].state = "unknown";
+						break;
+					}
+					if(this.actuators[i].data[0].state == true){
+						this.actuators[i].state = "active";
+						break;
+					}
+					if(this.actuators[i].data[0].state == false){
+						this.actuators[i].state = "inactive";
+						break;
+					}
+					else{
+						this.actuators[i].state = "undefined";
+						break;
+					}
+				}
 				this.logics = data.logics;
 				console.log("sensors: " + this.sensors);
 				})
