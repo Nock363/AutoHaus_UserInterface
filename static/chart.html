@@ -23,16 +23,54 @@
 <div id="app" style="width:95%;max-width: 100%;" class="content">
 
 
+
+    <div class="module shadow">
+    </div>
+
     <div class="module shadow">
         <!--Slider to set moving average-->
         <div class="baseItem configBar">
+            
+            <div id="mainConfig" style="display: flex; flex-flow: row;">
+                <div class="dropDownSystem" style=" flex: 1 1 auto; width:80%">
+                    <select class="menu" id="dataSpan" name="dataSpan" onchange="document.getElementById('chartConfig').submit();" >
+                        <option value="fixtime">Fixxe Zeitspanne</option>
+                        <option value="length">Datenmenge</option>
+                    </select>
+                    <div class="dropArrow">&#9660;</div>
+                </div>
+
+                <button style="float:right; height:100%" id="liveButton" onclick="setLiveUpdate()">Live</button>
+                <!-- <a href="/index.html"><input type="button" style="float:right; margin-right: 5px;" id="homeButton" value="Home"></a> -->
+
+            </div>
+
+            
 
             <form id="chartConfig">
+
+                <!--This Dropdown menu let you slelect how you want to select the data-span trigger form when option is selected-->
+                <label for="dataSpan">Anzeigeart:</label>
+                <select class="shadowInset" id="dataSpan" name="dataSpan" onchange="document.getElementById('chartConfig').submit();" >
+                    <option value="fixtime">Fixxe Zeitspanne</option>
+                    
+                    <option value="length">Datenmenge</option>
+                </select>
+
                 <input type="hidden" name="sensor">
+                <label for="startTime">Startzeit:</label>
+                <input type="datetime-local" class="shadowInset" id="startTime" name="startTime" value="2021-01-01T00:00" oninput="updateMovAvg">
+                <label for="endTime">Endzeit:</label>
+                <input type="datetime-local" class="shadowInset" id="endTime" name="endTime" value="2021-01-01T00:00" oninput="updateMovAvg">
+                
+                <!--This button sets the time the actual time-->
+                <input type="button" class="submitButton" id="setToCurrentTimeButton" name="setToCurrentTimeButton" value="Aktuelle Zeit" onclick="resetTime();updateMovAvg();">
+
+                
                 <label for="movingAverageSlider">Moving Average:</label>
                 <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg">
-                <label for="movingAverageSlider">Datenmenge</label>
-                <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1" oninput="updateMovAvg">
+                <!-- <label for="movingAverageSlider">Datenmenge</label>
+                <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1" oninput="updateMovAvg"> -->
                 <!--Dropdown selcet menu to select "Sekunde","Minute","Stunde","Tag"-->
                 <label for="timeUnit">Zeiteinheit:</label>
 
@@ -78,8 +116,49 @@
     var avg = url.searchParams.get("avg");
     var timeUnit = url.searchParams.get("timeUnit");
 
+    //search for endTime and startTime in url. If not found, set startTime to current time minus 10 minutes and endTime to current time
+    var startTime = url.searchParams.get("startTime");
+    var endTime = url.searchParams.get("endTime");
+
+    if(startTime == null){
+        //set startTime to current time (germany time zone)
+        startTime = new Date();
+        offset = startTime.getTimezoneOffset();
+        startTime.setMinutes(startTime.getMinutes() - 10 - offset);
+        startTime = startTime.toISOString().slice(0,16);
+    }
+
+    if(endTime == null){
+        endTime = new Date();
+        offset = endTime.getTimezoneOffset();
+        endTime.setMinutes(endTime.getMinutes() - offset);
+        endTime = endTime.toISOString().slice(0,16);
+    }
+
+    console.log("startTime: ",startTime);
+    console.log("endTime: ",endTime);
+
+    function resetTime(){
+        endTime = new Date();
+        offset = endTime.getTimezoneOffset();
+        endTime.setMinutes(endTime.getMinutes() - offset);
+        endTime = endTime.toISOString().slice(0,16);
+
+        startTime = new Date();
+        offset = startTime.getTimezoneOffset();
+        startTime.setMinutes(startTime.getMinutes() - 10 - offset);
+        startTime = startTime.toISOString().slice(0,16);
+
+        document.forms["chartConfig"]["startTime"].value = startTime;
+        document.forms["chartConfig"]["endTime"].value = endTime;
+        
+    }
+
+
     //http://192.168.0.17:5000/sensorHistory?sensor=Arduino&length=10    
-    var fetchURL = "/sensorHistory?sensor="+sensor+"&length=" + (Number(length)+Number(avg));
+    //http://192.168.0.126:5000/sensorHistoryByTimespan?startTime=2023-08-21T17:50&endTime=2023-08-21T18:00&sensor=Sinus1
+    // var fetchURL = "/sensorHistory?sensor="+sensor+"&length=" + (Number(length)+Number(avg));
+    var fetchURL = "/sensorHistoryByTimespan?startTime="+startTime+"&endTime="+endTime+"&sensor="+sensor;
     var updateURL = fetchURL;
     
 
@@ -88,6 +167,8 @@
     document.forms["chartConfig"]["avg"].value = avg;
     document.forms["chartConfig"]["length"].value = length;
     document.forms["chartConfig"]["timeUnit"].value = timeUnit;
+    document.forms["chartConfig"]["startTime"].value = startTime;
+    document.forms["chartConfig"]["endTime"].value = endTime;
 
     //length of data to be displayed
     var movAvgLength = avg;
