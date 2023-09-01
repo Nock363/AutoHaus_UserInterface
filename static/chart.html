@@ -31,69 +31,61 @@
         <!--Slider to set moving average-->
         <div class="baseItem configBar">
             
-            <div id="mainConfig" style="display: flex; flex-flow: row;">
-                <div class="dropDownSystem" style=" flex: 1 1 auto; width:80%">
-                    <select class="menu" id="dataSpan" name="dataSpan" onchange="document.getElementById('chartConfig').submit();" >
-                        <option value="fixtime">Fixxe Zeitspanne</option>
-                        <option value="length">Datenmenge</option>
+            <div id="mainConfig" style="display: flex; flex-flow: row; ">
+                <div class="dropDownSystem" style=" flex: 1 1 auto; margin-right:5px">
+                    <select class="menu" id="dataSpan" id="configSelection" onchange="updateConfig(this.value)" >
+                        <option value="lastTime">Einträge der letzten Zeitspanne</option>
+                        <option value="fixtime">Zeitspanne von bis</option>
+                        <option value="length">Datenmenge X</option>
                     </select>
                     <div class="dropArrow">&#9660;</div>
                 </div>
 
-                <button style="float:right; height:100%" id="liveButton" onclick="setLiveUpdate()">Live</button>
-                <!-- <a href="/index.html"><input type="button" style="float:right; margin-right: 5px;" id="homeButton" value="Home"></a> -->
+                <button style="margin-right:5px" id="liveButton" onclick="setLiveUpdate()">Live</button>
+                <button style="margin-right:5px" id="homeButton" onclick="submitForm()">Updaten</button>
+                <button id="homeButton" onclick="window.location.href = 'index.html';">Home</button>
 
             </div>
 
-            
+            <div id="chartConfig">
 
-            <form id="chartConfig">
+                <form class="subForm" id="chartConfig_base" onsubmit="event.preventDefault();submitForm()">
+                    <input type="hidden" name="sensor">
+                    <label for="movingAverageSlider">Moving Average:</label>
+                    <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg(this.value)">
+                    <label for="timeUnit">Zeiteinheit:</label>
+                    <select class="shadowInset" id="timeUnit" name="timeUnit">
+                        <option value="second">Sekunde</option>
+                        <option value="minute">Minute</option>
+                        <option value="hour">Stunde</option>
+                        <option value="day">Tag</option>
+                    </select>
+                </form>
 
-                <!--This Dropdown menu let you slelect how you want to select the data-span trigger form when option is selected-->
-                <label for="dataSpan">Anzeigeart:</label>
-                <select class="shadowInset" id="dataSpan" name="dataSpan" onchange="document.getElementById('chartConfig').submit();" >
-                    <option value="fixtime">Fixxe Zeitspanne</option>
-                    
-                    <option value="length">Datenmenge</option>
-                </select>
-
-                <input type="hidden" name="sensor">
-                <label for="startTime">Startzeit:</label>
-                <input type="datetime-local" class="shadowInset" id="startTime" name="startTime" value="2021-01-01T00:00" oninput="updateMovAvg">
-                <label for="endTime">Endzeit:</label>
-                <input type="datetime-local" class="shadowInset" id="endTime" name="endTime" value="2021-01-01T00:00" oninput="updateMovAvg">
+                <form class="subForm" id="chartConfig_lastTime">
+                    <p>In progess...</p>
+                </form>
                 
-                <!--This button sets the time the actual time-->
-                <input type="button" class="submitButton" id="setToCurrentTimeButton" name="setToCurrentTimeButton" value="Aktuelle Zeit" onclick="resetTime();updateMovAvg();">
-
                 
-                <label for="movingAverageSlider">Moving Average:</label>
-                <input type="number" class="shadowInset" id="movingAverageInput" name="avg" min="1" max="100" value="10" step="1" oninput="updateMovAvg">
-                <!-- <label for="movingAverageSlider">Datenmenge</label>
-                <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1" oninput="updateMovAvg"> -->
-                <!--Dropdown selcet menu to select "Sekunde","Minute","Stunde","Tag"-->
-                <label for="timeUnit">Zeiteinheit:</label>
+                <form class="subForm" id="chartConfig_fixTime" onsubmit="event.preventDefault();submitForm()">
+                    <label for="startTime">Startzeit:</label>
+                    <input type="datetime-local" class="shadowInset" id="startTime" name="startTime" value="2021-01-01T00:00">
+                    <label for="endTime">Endzeit:</label>
+                    <input type="datetime-local" class="shadowInset" id="endTime" name="endTime" value="2021-01-01T00:00">
+                    <input type="button" class="submitButton" id="setToCurrentTimeButton" name="setToCurrentTimeButton" value="Aktuelle Zeit" onclick="resetTime();">
+                </form>
 
-                <select class="shadowInset" id="timeUnit" name="timeUnit" onchange="updateMovAvg()" >
-                    <option value="second">Sekunde</option>
-                    <option value="minute">Minute</option>
-                    <option value="hour">Stunde</option>
-                    <option value="day">Tag</option>
-                </select>
-                <input type="submit" class="submitButton" id="updateSubmitInput" name="updateSubmitInput" value="Updaten">
+                <form class="subForm" id="chartConfig_length" onsubmit="event.preventDefault();submitForm()">
+                    <label for="length">Datenmenge</label>
+                    <input type="number" class="shadowInset" id="dataLengthInput" name="length" min="10" max="5000" value="200" step="1">
+                </form>
                 
 
-                <input type="button" style="float:right" id="liveButton" onclick="setLiveUpdate()" value="Live">
-                <a href="/index.html"><input type="button" style="float:right; margin-right: 5px;" id="homeButton" value="Home"></a>
                 
+                <!-- <input type="submit" class="submitButton" id="updateSubmitInput" name="updateSubmitInput" value="Updaten"> -->
                 <!-- <button style="float:right;height:100%" id="liveButton" onclick="setLiveUpdate()">Live update</button> -->
 
-            </form>
-            <!-- <label for="startDate">Start Date:</label>
-            <input type="datetime-local" class="shadowInset" id="startDate" name="startDate" value="2021-01-01T00:00" oninput="updateMovAvg">
-            <label for="endDate">Start Date:</label>
-            <input type="datetime-local" class="shadowInset" id="endDate" name="endDate" value="2021-01-01T00:00" oninput="updateMovAvg"> -->
-            
+            </div>
         </div>
 
     </div>
@@ -107,18 +99,57 @@
 
     //get data path from url
     var url = new URL(window.location.href);
-    
-
     var updateInterval = 1;
 
+    //if config in url, set selectedSubForm to config from url
+    var selectedSubForm = "length";
+    if(url.searchParams.get("config") != null){
+        selectedSubForm = url.searchParams.get("config");
+    }
+    console.log("initial setup config");
+    updateConfig(selectedSubForm);
+
+
+    //set selection in dropdown menu
+    document.getElementById("dataSpan").value = selectedSubForm;
+
     var sensor = url.searchParams.get("sensor");
-    var length = url.searchParams.get("length");
+    
+    
     var avg = url.searchParams.get("avg");
+    if(avg == null){
+        avg = 3;
+    }
+
     var timeUnit = url.searchParams.get("timeUnit");
+    document.forms["chartConfig_base"]["timeUnit"].value = timeUnit;
+
+    //update chartConfig
+    document.forms["chartConfig_base"]["sensor"].value = sensor;
+    document.forms["chartConfig_base"]["avg"].value = avg;
+
+    var length = 50;
+    if(url.searchParams.get("length") != null){
+        length = url.searchParams.get("length");
+    }
+
+    if(selectedSubForm == "length")
+        document.forms["chartConfig_length"]["length"].value = length;
+    
+    var startTime = undefined;
+    var endTime = undefined;
+
+    if(selectedSubForm == "fixtime"){
+        var startTime = url.searchParams.get("startTime");
+        var endTime = url.searchParams.get("endTime");
+        document.forms["chartConfig_fixTime"]["startTime"].value = url.searchParams.get("startTime");
+        document.forms["chartConfig_fixTime"]["endTime"].value = url.searchParams.get("endTime");
+    }else{
+        resetTime();
+    }
 
     //search for endTime and startTime in url. If not found, set startTime to current time minus 10 minutes and endTime to current time
-    var startTime = url.searchParams.get("startTime");
-    var endTime = url.searchParams.get("endTime");
+    
 
     if(startTime == null){
         //set startTime to current time (germany time zone)
@@ -138,6 +169,42 @@
     console.log("startTime: ",startTime);
     console.log("endTime: ",endTime);
 
+    var fetchURL = "";
+    var updateURL = fetchURL;
+    
+    //length of data to be displayed
+    var movAvgLength = avg;
+    var chartsContainer = document.getElementById("charts");
+    var charts = [];
+
+    fetchURL = getUpdateURL()
+    createCharts(fetchURL);
+
+
+    //dict with all subForms
+    var subForms = {
+        "lastTime": document.getElementById("chartConfig_lastTime"),
+        "fixtime": document.getElementById("chartConfig_fixTime"),
+        "length": document.getElementById("chartConfig_length")
+    }
+    
+    updateConfig(selectedSubForm);
+    
+    var liveButton = document.getElementById("liveButton");
+    var updateLive = true;
+
+    function updateMovAvg(input){
+        //try to cast input to number. Only update if input is a number
+        // if(input == ""){
+        //     console.log("input is not a number");
+        //     return;
+        // }
+        input = Number(input);
+        
+        movAvgLength = input;
+        console.log("Update moving average: ", input);
+    }
+
     function resetTime(){
         endTime = new Date();
         offset = endTime.getTimezoneOffset();
@@ -149,42 +216,89 @@
         startTime.setMinutes(startTime.getMinutes() - 10 - offset);
         startTime = startTime.toISOString().slice(0,16);
 
-        document.forms["chartConfig"]["startTime"].value = startTime;
-        document.forms["chartConfig"]["endTime"].value = endTime;
+        document.forms["chartConfig_fixTime"]["startTime"].value = startTime;
+        document.forms["chartConfig_fixTime"]["endTime"].value = endTime;
         
     }
 
+    function getUpdateURL(){
+        
+        returnURL = "";
 
-    //http://192.168.0.17:5000/sensorHistory?sensor=Arduino&length=10    
-    //http://192.168.0.126:5000/sensorHistoryByTimespan?startTime=2023-08-21T17:50&endTime=2023-08-21T18:00&sensor=Sinus1
-    // var fetchURL = "/sensorHistory?sensor="+sensor+"&length=" + (Number(length)+Number(avg));
-    var fetchURL = "/sensorHistoryByTimespan?startTime="+startTime+"&endTime="+endTime+"&sensor="+sensor;
-    var updateURL = fetchURL;
-    
+        switch(selectedSubForm){
+            case "lastTime":
+                returnURL = "";
+                break;
+            case "fixtime":
+                returnURL = "/sensorHistoryByTimespan?startTime="+startTime+"&endTime="+endTime+"&sensor="+sensor;
+                break;
+            case "length":
+                returnURL = "/sensorHistory?sensor="+sensor+"&length=" + (Number(length)+Number(avg));
+                break;
+        }
 
-    //update chartConfig
-    document.forms["chartConfig"]["sensor"].value = sensor;
-    document.forms["chartConfig"]["avg"].value = avg;
-    document.forms["chartConfig"]["length"].value = length;
-    document.forms["chartConfig"]["timeUnit"].value = timeUnit;
-    document.forms["chartConfig"]["startTime"].value = startTime;
-    document.forms["chartConfig"]["endTime"].value = endTime;
+        console.log("updateURL: ", returnURL);
+        return returnURL;
 
-    //length of data to be displayed
-    var movAvgLength = avg;
-    var chartsContainer = document.getElementById("charts");
-    var charts = [];
+    }
 
-    // var startDateInput = document.getElementById("startDate");
-    // var endDateInput = document.getElementById("endDate");
+    function updateConfig(type){
 
-    // //update end date to current date
-    // setToCurrentTime(startDateInput);
-    // setToCurrentTime(endDateInput);
-    
-    var liveButton = document.getElementById("liveButton");
-    var updateLive = true;
+        //if subForms is undefined do nothing
+        if(subForms == undefined)
+            return;
 
+        //if type is not in subForm log error and return    
+        if(!(type in subForms)){
+            console.log("type not in subForms");
+            return;
+        }
+
+        //hide all subForms and show selected one
+        for (const [key, value] of Object.entries(subForms)) {
+            value.style.display = "none";
+        }
+        subForms[type].style.display = "block";
+        selectedSubForm = type;
+    }
+
+    function submitForm(){
+
+        //add inputs from selected subForm as hidden input tu base form
+        var baseForm = document.getElementById("chartConfig_base");
+        var subForm = subForms[selectedSubForm];
+        var inputs = subForm.getElementsByTagName("input");
+        
+        //add selected subForm to base form as hidden input
+        var newInput = document.createElement("input");
+        newInput.type = "hidden";
+        newInput.name = "config";
+        newInput.value = selectedSubForm;
+        baseForm.appendChild(newInput);
+
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs[i];
+            
+            //ignore button inputs
+            if(input.type == "button"){
+                continue;
+            }
+
+            var newInput = document.createElement("input");
+            newInput.type = "hidden";
+            newInput.name = input.name;
+            newInput.value = input.value;
+            baseForm.appendChild(newInput);
+        }
+
+        //log base form
+        // console.log(baseForm);
+
+
+        //submit base form
+        baseForm.submit();
+    }
 
     function setLiveUpdate(){
         if(updateLive){
@@ -212,11 +326,13 @@
         fetch(url)
             .then(response => response.json())
             .then(dataFromServer => {
+                //Invert dataFromServer
+                dataFromServer = dataFromServer.reverse();
+
+                
                 console.log("collections: ", dataFromServer);
 
-                //Invert dataFromServer
-                // dataFromServer = dataFromServer.reverse();
-
+                
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
@@ -241,10 +357,10 @@
         fetch(url)
             .then(response => response.json())
             .then(dataFromServer => {
-                console.log("collections: ", dataFromServer);
-
                 //Invert dataFromServer
-                // dataFromServer = dataFromServer.reverse();
+                dataFromServer = dataFromServer.reverse();
+
+                console.log("get data from url: ",url, dataFromServer);
 
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
@@ -287,7 +403,6 @@
         });
     }
 
-
     function createChartCanvas(name,labels,datasets) {
         var chartCanvas = document.createElement('canvas');
         var chartElement = document.createElement("div");
@@ -300,35 +415,48 @@
         
 
         var chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {labels: labels, datasets: datasets},
-                        options: {
-                            scales: {
-                                x: {
-                                    type: 'time',
-                                    time: {
-                                        unit: timeUnit
-                                    }
-                                }
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: timeUnit,
+                            displayFormats: {
+                                second: 'HH:mm:ss',
+                                minute: 'HH:mm',
+                                hour: 'HH:mm',
+                                day: 'MMM D'
                             },
-                            animation: {
-                                duration: 0 // Set duration to 0 to disable animation
-                            },
-                            plugins: {
-                                // zoom: {
-                                //     zoom: {
-                                //     wheel: {
-                                //         enabled: true,
-                                //     },
-                                //     pinch: {
-                                //         enabled: true
-                                //     },
-                                //     mode: 'xy',
-                                //     }
-                                // }
-                            }
+                            parser: 'moment',
+                            tooltipFormat: 'HH:mm:ss',
+                            timezone: 'Europe/Berlin' // Deutsche Zeitzone
                         }
-                    });
+                    }
+                },
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    // zoom: {
+                    //     zoom: {
+                    //         wheel: {
+                    //             enabled: true,
+                    //         },
+                    //         pinch: {
+                    //             enabled: true
+                    //         },
+                    //         mode: 'xy',
+                    //     }
+                    // }
+                }
+            }
+        });
+
 
         return {"canvas": chartCanvas, "chart": chart,"element":chartElement};
     }
@@ -395,18 +523,21 @@
         return outputDataSet;
     }
 
-    function createLabels(rawData){
-        
-        return rawData.map(datum => new Date(datum.time));
-    }
+    function createLabels(rawData) {
+    return rawData.map(datum => {
+        // Konvertiere den Zeitstempel in ein Datum
+        const date = new Date(datum.time);
+        date.setHours(date.getHours() - 2);
 
-    
+        return date;
+    });
+}
 
-    createCharts(fetchURL);
 
     //update chart in updateInterval seconds
     setInterval(function() {
         if(updateLive){
+            updateURL = getUpdateURL()
             updateCharts(updateURL);
         }
     }, updateInterval * 5000);

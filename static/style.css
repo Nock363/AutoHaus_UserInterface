@@ -716,6 +716,11 @@ form{
 	width: 100%;
 }
 
+.subForm{
+	display: inline;
+	width: auto;
+}
+
 a{
 	color: var(--links-Color);
 }
