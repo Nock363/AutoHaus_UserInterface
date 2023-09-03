@@ -22,11 +22,6 @@
   
 <div id="app" style="width:95%;max-width: 100%;" class="content">
 
-
-
-    <div class="module shadow">
-    </div>
-
     <div class="module shadow">
         <!--Slider to set moving average-->
         <div class="baseItem configBar">
@@ -62,8 +57,41 @@
                     </select>
                 </form>
 
-                <form class="subForm" id="chartConfig_lastTime">
-                    <p>In progess...</p>
+                <form class="subForm" id="chartConfig_lastTime" onsubmit="event.preventDefault();submitForm()">
+                    <label for="timespanUnit">Zeitspanne Auflösung:</label>
+                    <select class="shadowInset" name="timespanUnit" id="timespanUnit" onchange="setTimespanLimits(this.value)">
+                        <option value="second">Sekunde</option>
+                        <option value="minute">Minute</option>
+                        <option value="hour">Stunde</option>
+                    </select>
+                    <label for="timespan">Zeitspanne:</label>
+                    <input type="number" class="shadowInset" id="timeSpan" name="timespan" min="1" max="100" value="10" step="1">
+
+                    <script>
+
+                        function setTimespanLimits(value){
+                            input = document.forms["chartConfig_lastTime"]["timespan"];
+                            switch(value){
+                                case "second":
+                                    input.min = 1;
+                                    input.max = 60;
+                                    
+                                    break;
+                                case "minute":
+                                    input.min = 1;
+                                    input.max = 60;
+                                    break;
+                                case "hour":
+                                    input.min = 1;
+                                    input.max = 240;
+                                    break;
+                            }
+                            if(input.value > input.max)
+                                input.value = input.max;
+                        }
+
+                    </script>
+
                 </form>
                 
                 
@@ -121,7 +149,11 @@
         avg = 3;
     }
 
-    var timeUnit = url.searchParams.get("timeUnit");
+
+
+    var timeUnit = "minute";
+    if(url.searchParams.get("timeUnit") != null)
+        timeUnit = url.searchParams.get("timeUnit");
     document.forms["chartConfig_base"]["timeUnit"].value = timeUnit;
 
     //update chartConfig
@@ -148,6 +180,19 @@
         resetTime();
     }
 
+    //chartConfig_lastTime init stuff.
+    var timespanUnit = "minute";
+    if(url.searchParams.get("timespanUnit") != null){
+        timespanUnit = url.searchParams.get("timespanUnit");
+    }
+    document.forms["chartConfig_lastTime"]["timespanUnit"].value = timespanUnit;
+
+    var timespan = 10
+    if(url.searchParams.get("timespan") != null){
+        timespan = url.searchParams.get("timespan");
+    }
+    document.forms["chartConfig_lastTime"]["timespan"].value = timespan;
+
     //search for endTime and startTime in url. If not found, set startTime to current time minus 10 minutes and endTime to current time
     
 
@@ -169,15 +214,17 @@
     console.log("startTime: ",startTime);
     console.log("endTime: ",endTime);
 
-    var fetchURL = "";
-    var updateURL = fetchURL;
+    
     
     //length of data to be displayed
     var movAvgLength = avg;
     var chartsContainer = document.getElementById("charts");
     var charts = [];
 
+    
+    var fetchURL = "";
     fetchURL = getUpdateURL()
+    var updateURL = fetchURL;
     createCharts(fetchURL);
 
 
@@ -227,7 +274,33 @@
 
         switch(selectedSubForm){
             case "lastTime":
-                returnURL = "";
+                //get timespan from form
+                var timespan = document.forms["chartConfig_lastTime"]["timespan"].value;
+                var timespanUnit = document.forms["chartConfig_lastTime"]["timespanUnit"].value;
+
+                //create startTime. startTime is the current time minus timespan
+                var timespanStart = new Date();
+                offset = timespanStart.getTimezoneOffset();
+                switch(timespanUnit){
+                    case "second":
+                    timespanStart.setSeconds(timespanStart.getSeconds() - timespan - offset*60);
+                        break;
+                    case "minute":
+                    timespanStart.setMinutes(timespanStart.getMinutes() - timespan - offset);
+                        break;
+                    case "hour":
+                    timespanStart.setHours(timespanStart.getHours() - timespan - offset/60);
+                        break;
+                }
+                timespanStart = timespanStart.toISOString().slice(0,16);
+
+                //create endTime. endTime is the current time plus one minute
+                var timespanEnd = new Date();
+                offset = timespanEnd.getTimezoneOffset();
+                timespanEnd.setMinutes(timespanEnd.getMinutes() + 1 - offset);
+                timespanEnd = timespanEnd.toISOString().slice(0,16);
+
+                returnURL = "/sensorHistoryByTimespan?startTime="+timespanStart+"&endTime="+timespanEnd+"&sensor="+sensor;;
                 break;
             case "fixtime":
                 returnURL = "/sensorHistoryByTimespan?startTime="+startTime+"&endTime="+endTime+"&sensor="+sensor;
@@ -267,7 +340,9 @@
         //add inputs from selected subForm as hidden input tu base form
         var baseForm = document.getElementById("chartConfig_base");
         var subForm = subForms[selectedSubForm];
-        var inputs = subForm.getElementsByTagName("input");
+        
+        //get all inputs and selections from subForm in one list
+        var inputs = [ ...subForm.getElementsByTagName("input"), ...subForm.getElementsByTagName("select")];
         
         //add selected subForm to base form as hidden input
         var newInput = document.createElement("input");
@@ -537,12 +612,13 @@
     //update chart in updateInterval seconds
     setInterval(function() {
         if(updateLive){
-            updateURL = getUpdateURL()
+            if(selectedSubForm == "lastTime")
+                updateURL = getUpdateURL();
             updateCharts(updateURL);
         }
     }, updateInterval * 5000);
 
     
-  </script>
+</script>
 </body>
 </html>

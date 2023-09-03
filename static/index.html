@@ -22,7 +22,15 @@
         </svg>
 
 	</div> -->
+
+	
+
 	<div id="app" class="content">
+
+		<div class="loadingOverlay" :class="{hide: !loading}">
+			<p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
+			<div class="loadingIcon">&#8987;</div>
+		</div>
 
 		<div class="module scheduler shadow">
 			<h1>Scheduler</h1>
@@ -34,13 +42,21 @@
 			<h1>Sensors</h1>
 
 			<div v-for="sensor in sensors" :key="sensor.name"  class="baseItem manipulator sensor shadow">
+				
 				<h2>{{sensor.name}}</h2>
-				<p>{{sensor.class}}</p>
+				<input class="isActive" type="checkbox" v-model="sensor.active" @change="setSensorState(sensor.name, sensor.active)"/>
+                <p>{{sensor.class}}</p>
 				<p>{{sensor.datastackSize}} Einträge</p>
 				
-				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&length=300&avg=10'">Chart</a>				
-				<p v-if="sensor.active == true" class="isActive">aktiv</p>
-				<p v-else class="isInActive">inaktiv</p>
+				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&avg=10&timeUnit=minute&config=lastTime&timespan=20&timespanUnit=minute'">Chart</a>				
+			</div>
+
+			<div v-for="brokenSensor in brokenSensors" :key="brokenSensor.name"  class="baseItem manipulator sensor shadow">
+				
+				<h2>{{brokenSensor.sensor.name}}</h2>
+				<input class="isActive" type="checkbox"/>
+                <p>{{brokenSensor.sensor.class}}</p>
+				<p @click="brokenSensorInfo(brokenSensor)" style="color:red;font-weight:bold;cursor:pointer">Broken &#9432;</p>				
 			</div>
 
 
@@ -70,8 +86,8 @@
 				</div>
 				
 
-				<p v-if="actuator.active == true" class="isActive">aktiv</p>
-				<p v-else class="isInActive">inaktiv</p>
+				<!-- <p v-if="actuator.active == true" class="isActive">aktiv</p>
+				<p v-else class="isInActive">inaktiv</p> -->
 			</div>
 
 			<div class="baseItem shadow">
@@ -136,11 +152,15 @@
 		createApp({
 		data() {
 			return {
+			loading: true,
 			message: 'Hello Vue!',
 			subheadline: "This is a subheadline",
 			sensors: [], // create an empty array to store the sensor data
 			actuators: [], // create an empty array to store the sensor data
-			logics: [] // create an empty array to store the sensor data
+			logics: [], // create an empty array to store the sensor data
+			brokenSensors: [],
+			brokenActuators: [],
+			brokenLogics: []
 			}
 		},
 		mounted() {
@@ -177,7 +197,14 @@
 					}
 				}
 				this.logics = data.logics;
+
+				this.brokenSensors = data.brokenSensors;
+				this.brokenActuators = data.brokenActuators;
+				this.brokenLogics = data.brokenLogics;
+
 				console.log("sensors: " + this.sensors);
+
+				this.loading = false; // hide the loading message
 				})
 				.catch(error => console.error(error)); // log any errors to the console
 			},
@@ -196,9 +223,11 @@
 					this.error = error.message;
 					alert(error);
 				}
-			}
+			},
 	
-
+			brokenSensorInfo(brokenSensor){
+				alert(brokenSensor.error);
+			},
 
 		}
 		}).mount('#app');

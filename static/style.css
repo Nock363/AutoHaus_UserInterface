@@ -11,7 +11,47 @@
 	--links-Color: #007cff;
 	--gap: 0.5rem;
 }
-		
+
+
+.loadingOverlay{
+    position: fixed;
+	left:0;
+	top:0;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    margin: 0;
+    padding: 10% 20px;
+    font-weight: bold;
+    opacity: 1;
+    transition: opacity 1.5s ease;
+    pointer-events: all; /* block all pointer events when present */
+}
+
+.loadingOverlay.hide{
+    opacity: 0;
+    pointer-events: none; /* do not block pointer events when hidden */
+}
+
+.loadingOverlay > .loadingIcon{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 300%;
+    animation: rotate 2s ease infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }    
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
 
 /*Navigation Bar Anfang___________________________________________________*/
 
@@ -238,7 +278,7 @@
 
 .baseItem{
 	position: relative;
-	cursor: pointer;
+	/* cursor: pointer; */
 	background-color: white;
 	font-size: 17;
 	padding: 20px;
@@ -264,9 +304,9 @@
 		transition: all 0.5s;
 	}
 
-	.baseGrid > .baseItem:hover{
+	/* .baseGrid > .baseItem:hover{
 		transform: scale(1.01);
-	}
+	} */
 
 	.baseGrid > h1{
 		text-align: center;
@@ -332,15 +372,16 @@
 	width: 100%;
 }
 
+
+
+
 .manipulator > .isActive{
-	color: var(--positiv-Color);
-	/*bold text*/
-	font-weight: bold;
-	/*place on bottom of the parent div*/
+	
 	position: absolute;
-	bottom: 15px;
-	/*border on the bottom*/
-	/* border-bottom: 2px solid var(--positiv-Color); */
+	top: 15px;
+	right: 15px;
+	text-align: right;
+	-webkit-appearance: checkbox;
 
 }
 
