@@ -34,9 +34,9 @@
 
 		<div class="module scheduler shadow">
 			<h1>Scheduler</h1>
-			<!-- <p class="isActive">running</p> -->
-			<button>Start</button>
-		</div>
+			<p class="status">scheduler status: {{status}}</p>
+			<button @click="toggleScheduler">{{ buttonLabel }}</button>
+			</div>
 		<div class="module baseGrid sensorList">
 
 			<h1>Sensors</h1>
@@ -51,12 +51,11 @@
 				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&avg=10&timeUnit=minute&config=lastTime&timespan=20&timespanUnit=minute'">Chart</a>				
 			</div>
 
-			<div v-for="brokenSensor in brokenSensors" :key="brokenSensor.name"  class="baseItem manipulator sensor shadow">
-				
-				<h2>{{brokenSensor.sensor.name}}</h2>
-				<input class="isActive" type="checkbox"/>
-                <p>{{brokenSensor.sensor.class}}</p>
-				<p @click="brokenSensorInfo(brokenSensor)" style="color:red;font-weight:bold;cursor:pointer">Broken &#9432;</p>				
+			<div v-for="brokenSensor in brokenSensors" :key="brokenSensor.name" class="baseItem manipulator sensor shadow">
+				<h2>{{ brokenSensor.sensor.name }}</h2>
+				<input class="isActive" type="checkbox" v-on:change="startBrokenSensor(brokenSensor,this)"/>
+				<p>{{ brokenSensor.sensor.class }}</p>
+				<p @click="brokenSensorInfo(brokenSensor)" style="color:red;font-weight:bold;cursor:pointer">Broken &#9432;</p>
 			</div>
 
 
@@ -155,6 +154,7 @@
 			loading: true,
 			message: 'Hello Vue!',
 			subheadline: "This is a subheadline",
+			status: "not received",
 			sensors: [], // create an empty array to store the sensor data
 			actuators: [], // create an empty array to store the sensor data
 			logics: [], // create an empty array to store the sensor data
@@ -169,44 +169,46 @@
 		},
 		methods: {
 			fetchSystemData() {
-			// Fetch the sensor data from the server
-			fetch("/systemInfo")
-				.then(response => response.json()) // convert the response to JSON
-				.then(data => {
-				// Update the sensors array with the data from the server
-				console.log("data");
-				this.sensors = data.sensors;
-				this.actuators = data.actuators;
-				for (let i = 0; i < this.actuators.length; i++) {
-					//add state to actuators. true= "active",false= "inactive",no data= "unknown"
-					if(this.actuators[i].data.length == 0){
-						this.actuators[i].state = "unknown";
-						break;
+				// Fetch the sensor data from the server
+				fetch("/systemInfo")
+					.then(response => response.json()) // convert the response to JSON
+					.then(data => {
+					// Update the sensors array with the data from the server
+					console.log("data");
+					this.status = data.status;
+					this.buttonLabel = (this.status === "ready" ? "Start" : "Stop");
+					this.sensors = data.sensors;
+					this.actuators = data.actuators;
+					for (let i = 0; i < this.actuators.length; i++) {
+						//add state to actuators. true= "active",false= "inactive",no data= "unknown"
+						if(this.actuators[i].data.length == 0){
+							this.actuators[i].state = "unknown";
+							break;
+						}
+						if(this.actuators[i].data[0].state == true){
+							this.actuators[i].state = "active";
+							break;
+						}
+						if(this.actuators[i].data[0].state == false){
+							this.actuators[i].state = "inactive";
+							break;
+						}
+						else{
+							this.actuators[i].state = "undefined";
+							break;
+						}
 					}
-					if(this.actuators[i].data[0].state == true){
-						this.actuators[i].state = "active";
-						break;
-					}
-					if(this.actuators[i].data[0].state == false){
-						this.actuators[i].state = "inactive";
-						break;
-					}
-					else{
-						this.actuators[i].state = "undefined";
-						break;
-					}
-				}
-				this.logics = data.logics;
+					this.logics = data.logics;
 
-				this.brokenSensors = data.brokenSensors;
-				this.brokenActuators = data.brokenActuators;
-				this.brokenLogics = data.brokenLogics;
+					this.brokenSensors = data.brokenSensors;
+					this.brokenActuators = data.brokenActuators;
+					this.brokenLogics = data.brokenLogics;
 
-				console.log("sensors: " + this.sensors);
+					console.log("sensors: " + this.sensors);
 
-				this.loading = false; // hide the loading message
-				})
-				.catch(error => console.error(error)); // log any errors to the console
+					this.loading = false; // hide the loading message
+					})
+					.catch(error => console.error(error)); // log any errors to the console
 			},
 
 			async setActuatorState(name, state) {
@@ -228,6 +230,49 @@
 			brokenSensorInfo(brokenSensor){
 				alert(brokenSensor.error);
 			},
+
+			startBrokenSensor(brokenSensor,checkbox){
+				//ask if the user wants to start the sensor
+				if(confirm("Möchtest du den Sensor " + brokenSensor.sensor.name + " starten? Dies kann ggf, etwas dauern.")){
+					//start the sensor
+					fetch("/startBrokenSensor?sensor=" + brokenSensor.sensor.name)
+					.then(response => response.json()) // convert the response to JSON
+					.then(data => {
+						console.log(data);
+						if(data["success"] == true){
+							//reload page
+							location.reload();
+						}
+						else{	
+							alert("Fehler beim starten des Sensors: " + data["error"]);
+							//uncheck the checkbox
+							location.reload();
+						}
+					});
+				}
+			},
+
+			toggleScheduler(){
+				if(this.status == "ready")
+					var callUrl = "/startScheduler";
+				else
+					var callUrl = "/stopScheduler";
+
+				fetch(callUrl)
+				.then(response => response.json()) // convert the response to JSON
+				.then(data => {
+					console.log(data);
+					if(data["success"] == true){
+						//reload page
+						location.reload();
+					}
+					else{	
+						alert("Fehler beim starten des Schedulers: " + data["error"]);
+						//uncheck the checkbox
+						location.reload();
+					}
+				});
+			}
 
 		}
 		}).mount('#app');

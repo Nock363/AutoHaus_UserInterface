@@ -216,6 +216,11 @@
 	font-weight: bold;
 }
 
+.scheduler > .status{
+	flex: right;
+	font-weight: bold;
+}
+
 
 /*Scheduler Ende___________________________________________________*/
 

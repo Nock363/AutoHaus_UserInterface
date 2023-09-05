@@ -164,20 +164,20 @@ class RestAPI():
     def getSchedulerInfo(self):
         if(self.__scheduler == None):
             return jsonify({"success":False,"error":"Kein Scheduler konfiguriert"})
-        return jsonify({"status":self.__scheduler.statusProcess()})
+        return jsonify({"status":self.__scheduler.statusScheduler()})
 
     def startScheduler(self):
         if(self.__scheduler == None):
             return jsonify({"success":False,"error":"Kein Scheduler konfiguriert"})
         
-        self.__scheduler.startProcess()
+        self.__scheduler.startScheduler()
         return jsonify({"success":True})
 
     def stopScheduler(self):
         if(self.__scheduler == None):
             return jsonify({"success":False,"error":"Kein Scheduler konfiguriert"})
         
-        self.__scheduler.stopProcess()
+        self.__scheduler.stopScheduler()
         return jsonify({"success":True})
     
 
