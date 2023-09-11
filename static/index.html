@@ -35,6 +35,7 @@
 		<div class="module scheduler shadow">
 			<h1>Scheduler</h1>
 			<p class="status">scheduler status: {{status}}</p>
+			<p class="error">Fehler: {{errorCount}}</p>
 			<button @click="toggleScheduler">{{ buttonLabel }}</button>
 			</div>
 		<div class="module baseGrid sensorList">
@@ -160,12 +161,15 @@
 			logics: [], // create an empty array to store the sensor data
 			brokenSensors: [],
 			brokenActuators: [],
-			brokenLogics: []
+			brokenLogics: [],
+			errorCount: 0,
+			error: []
 			}
 		},
 		mounted() {
 			// Call the fetchSensorData function when the Vue app is mounted
-			this.fetchSystemData();
+			this.fetchSystemData()
+			// this.getErrors()
 		},
 		methods: {
 			fetchSystemData() {
@@ -179,6 +183,7 @@
 					this.buttonLabel = (this.status === "ready" ? "Start" : "Stop");
 					this.sensors = data.sensors;
 					this.actuators = data.actuators;
+					this.errorCount = data.errorCount;
 					for (let i = 0; i < this.actuators.length; i++) {
 						//add state to actuators. true= "active",false= "inactive",no data= "unknown"
 						if(this.actuators[i].data.length == 0){
@@ -210,6 +215,24 @@
 					})
 					.catch(error => console.error(error)); // log any errors to the console
 			},
+
+			//request errors from the server
+			// async getErrors() {
+			// 	try {
+			// 		const response = await fetch("/getErrors");
+			// 		const data = await response.json();
+			// 		console.log(data);
+			// 		if (data.success !== true) {
+			// 			this.error = data;
+			// 			this.errorCount = data.length;
+			// 		} else {
+			// 			this.error = null;
+			// 		}
+			// 	} catch (error) {
+			// 		this.error = error.message;
+			// 		alert(error);
+			// 	}
+			// },
 
 			async setActuatorState(name, state) {
 				try {

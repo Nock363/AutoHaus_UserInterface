@@ -221,6 +221,11 @@
 	font-weight: bold;
 }
 
+.scheduler > .error{
+	flex: right;
+	font-weight: bold;
+	color: red;
+}
 
 /*Scheduler Ende___________________________________________________*/
 
