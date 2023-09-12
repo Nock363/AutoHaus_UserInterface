@@ -35,7 +35,7 @@
 		<div class="module scheduler shadow">
 			<h1>Scheduler</h1>
 			<p class="status">scheduler status: {{status}}</p>
-			<p class="error">Fehler: {{errorCount}}</p>
+			<a style="color:red;font-weight:bold" href="/static/logs.html"><p class="error">Fehler: {{errorCount}}</p></a>
 			<button @click="toggleScheduler">{{ buttonLabel }}</button>
 			</div>
 		<div class="module baseGrid sensorList">

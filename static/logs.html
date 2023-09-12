@@ -1,0 +1,80 @@
+<html>
+
+<head>
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	
+
+	
+
+</head>
+
+<body>
+
+	<script>
+		
+	</script>
+
+	<div id="app" class="content">
+
+		<div class="loadingOverlay" :class="{hide: !loading}">
+			<p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
+			<div class="loadingIcon">&#8987;</div>
+		</div>
+
+		<div id="mainConfig" style="display: flex; flex-flow: row; ">
+			
+			<button id="homeButton" onclick="window.location.href = 'index.html';">Home</button>
+
+		</div>
+
+        <!--Create a table with two columns. the first colum is log.time and the second colum is log.record.-->
+        <table class="module log">
+            <tr>
+                <th>Zeit</th>
+                <th>Eintrag</th>
+            </tr>
+            <tr v-for="log in logs" :key="log.record">
+                <td>{{ log.time }}</td>
+                <td>{{ log.record }}</td>
+            </tr>
+        </table>
+			
+
+
+	</div>
+
+	<script>
+		
+		const { createApp } = Vue
+
+		createApp({
+		data() {
+			return {
+				logs: []
+			}
+		},
+		mounted() {
+			this.getLogs();
+		},
+		methods: {
+
+			//get logs from /getErrors
+			getLogs() {
+				fetch('/getErrors')
+				.then(response => response.json())
+				.then(data => {
+					this.logs = data;
+                    data.reverse();
+					console.log(data);
+				})
+			}
+
+		}
+		}).mount('#app');
+	  </script>
+
+</body>
+
+</html>
