@@ -28,7 +28,7 @@
 	<div id="app" class="content">
 
 		<div class="loadingOverlay" :class="{hide: !loading}">
-			<p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
+			<p>{{info}}</p>
 			<div class="loadingIcon">&#8987;</div>
 		</div>
 
@@ -163,7 +163,8 @@
 			brokenActuators: [],
 			brokenLogics: [],
 			errorCount: 0,
-			error: []
+			error: [],
+            info : "Das System lädt gerade noch, einen moment Geduld bitte",
 			}
 		},
 		mounted() {
@@ -181,9 +182,21 @@
 					console.log("data");
 					this.status = data.status;
 					this.buttonLabel = (this.status === "ready" ? "Start" : "Stop");
-					this.sensors = data.sensors;
+					
+                    if(this.status == "setup"){
+                        this.info = data.info;
+                        //call function again after 2 seconds
+                        setTimeout(this.fetchSystemData, 2000);
+                        console.log("rufe systemInfo erneut in 2 sekunden auf");
+                        console.log("data:", data);
+                        return;
+                    }
+
+                    this.sensors = data.sensors;
 					this.actuators = data.actuators;
 					this.errorCount = data.errorCount;
+                    this.info = data.info;
+
 					for (let i = 0; i < this.actuators.length; i++) {
 						//add state to actuators. true= "active",false= "inactive",no data= "unknown"
 						if(this.actuators[i].data.length == 0){
@@ -213,7 +226,13 @@
 
 					this.loading = false; // hide the loading message
 					})
-					.catch(error => console.error(error)); // log any errors to the console
+				.catch(err => {
+					// if an error occurs, set the error variable with the error message
+					this.error = err;
+					this.info = "Beim Laden der Daten hat etwas nicht geklappt. Wir versuchen es einfach nochmal!";
+					//call function again after 2 seconds
+					setTimeout(this.fetchSystemData, 2000);
+				});
 			},
 
 			//request errors from the server
