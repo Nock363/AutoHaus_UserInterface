@@ -183,6 +183,14 @@
 					this.status = data.status;
 					this.buttonLabel = (this.status === "ready" ? "Start" : "Stop");
 					
+
+					if(this.status == "broken"){
+                        this.errorCount = data.errorCount;
+                        this.info = data.info;
+                        //dont call function again
+                        return;
+                    }
+
                     if(this.status == "setup"){
                         this.info = data.info;
                         //call function again after 2 seconds
@@ -229,7 +237,7 @@
 				.catch(err => {
 					// if an error occurs, set the error variable with the error message
 					this.error = err;
-					this.info = "Beim Laden der Daten hat etwas nicht geklappt. Wir versuchen es einfach nochmal!";
+					this.info = "Upps, da ist ein Fehler unterlaufen, naja probieren wir es nochmal in 2 Sekunden.";
 					//call function again after 2 seconds
 					setTimeout(this.fetchSystemData, 2000);
 				});
