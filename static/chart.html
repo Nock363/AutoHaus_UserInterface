@@ -123,7 +123,7 @@
 </div>
   
   
-  <script>
+<script>
 
     //get data path from url
     var url = new URL(window.location.href);
@@ -411,14 +411,18 @@
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
-                labels = labels.slice(-length);
-                    
+                
+                if(selectedSubForm == "length")
+                    labels = labels.slice(-length);
 
                 //create chart for each dataset
                 datasets.forEach(dataset => {
                     var movAvg = createMovAvgDataSet(dataset,movAvgLength);
-                    movAvg.data = movAvg.data.slice(-length);
-                    dataset.data = dataset.data.slice(-length);
+                    
+                    if(selectedSubForm == "length"){
+                        movAvg.data = movAvg.data.slice(-length);
+                        dataset.data = dataset.data.slice(-length);
+                    }
                     var chartObject = createChartCanvas(dataset.name,labels,[dataset,movAvg]);
                     chartsContainer.appendChild(chartObject.element);
                     charts.push(chartObject.chart);
@@ -440,7 +444,8 @@
                 // Erstelle eine Liste von Labels
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
-                labels = labels.slice(-length);
+                if(selectedSubForm == "length")
+                    labels = labels.slice(-length);
 
                 
                 if(datasets.length != charts.length){
@@ -458,8 +463,12 @@
                     // }
 
                     var movAvg = createMovAvgDataSet(datasets[i],movAvgLength);
-                    movAvg.data = movAvg.data.slice(-length);
-                    datasets[i].data = datasets[i].data.slice(-length);
+                    if(selectedSubForm == "length"){
+                        movAvg.data = movAvg.data.slice(-length);
+                        datasets[i].data = datasets[i].data.slice(-length);
+                    
+                    }
+
                     
                     charts[i].data.labels = labels;
 
