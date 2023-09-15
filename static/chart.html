@@ -496,8 +496,6 @@
         //add chart to charts container
         var ctx = chartCanvas.getContext('2d');
 
-        
-
         var chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -517,7 +515,7 @@
                                 day: 'MMM D'
                             },
                             parser: 'moment',
-                            tooltipFormat: 'HH:mm:ss',
+                            tooltipFormat: 'DD.MM.YYYY HH:mm:ss',
                             timezone: 'Europe/Berlin' // Deutsche Zeitzone
                         }
                     }
@@ -540,7 +538,6 @@
                 }
             }
         });
-
 
         return {"canvas": chartCanvas, "chart": chart,"element":chartElement};
     }
@@ -623,7 +620,17 @@
         if(updateLive){
             if(selectedSubForm == "lastTime")
                 updateURL = getUpdateURL();
+
+            var now = new Date();
+            var end = new Date(endTime)
+            //check if endTime ist in the past. If yes, dont update
+            if(selectedSubForm == "fixtime" && end < now){
+                console.log("endTime in the past. Dont update");
+                return;
+            }
+        
             updateCharts(updateURL);
+        
         }
     }, updateInterval * 5000);
 
