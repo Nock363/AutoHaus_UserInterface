@@ -281,26 +281,14 @@
 				alert(brokenSensor.error);
 			},
 
-			startBrokenSensor(brokenSensor,checkbox){
-				//ask if the user wants to start the sensor
-				if(confirm("Möchtest du den Sensor " + brokenSensor.sensor.name + " starten? Dies kann ggf, etwas dauern.")){
-					//start the sensor
-					fetch("/startBrokenSensor?sensor=" + brokenSensor.sensor.name)
-					.then(response => response.json()) // convert the response to JSON
-					.then(data => {
-						console.log(data);
-						if(data["success"] == true){
-							//reload page
-							location.reload();
-						}
-						else{	
-							alert("Fehler beim starten des Sensors: " + data["error"]);
-							//uncheck the checkbox
-							location.reload();
-						}
-					});
-				}
-			},
+            startBrokenSensor(brokenSensor, checkbox) {
+                // ask if the user wants to start the sensor
+                if (confirm("Möchtest du den Sensor " + brokenSensor.sensor.name + " starten? Dies kann ggf, etwas dauern.")) {
+                    fetch("/startBrokenSensor?sensor=" + brokenSensor.sensor.name);
+                    //reload page
+                    location.reload();
+                }
+            },
 
 			toggleScheduler(){
 				if(this.status == "ready")
