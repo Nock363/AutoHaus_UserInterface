@@ -66,6 +66,13 @@
                         .then(response => response.json())
                         .then(data => {
                             this.data = data;
+
+                            //if data is length == 0 alert and return
+                            if(this.data.length == 0){
+                                alert("Keine Daten vorhanden");
+                                return;
+                            }
+
                             //get keys from data
                             this.keys = Object.keys(data[0]);
                             console.log("keys:",this.keys);
