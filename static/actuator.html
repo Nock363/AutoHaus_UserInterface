@@ -1,0 +1,84 @@
+<html>
+
+    <head>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+
+        <div id="app" class="content">
+
+            <div class="loadingOverlay" :class="{hide: !loading}">
+                <p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
+                <div class="loadingIcon">&#8987;</div>
+            </div>
+
+            <div id="mainConfig" style="display: flex; flex-flow: row; ">
+                <button id="homeButton" onclick="window.location.href = 'index.html';">Home</button>
+            </div>
+
+            <!--Create a table with dynamic columns-->
+            <table class="module log">
+                <thead>
+                    <tr>
+                        <th v-for="key in keys">{{ key }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="entry in data">
+                        <td v-for="key in keys">{{ entry[key] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <script>
+            const { createApp } = Vue
+
+            createApp({
+                data() {
+                    return {
+                        data: [],
+                        keys: [],
+                        actuator: "",
+                        length: 100,
+                    }
+                },
+                mounted() {
+                    //get actuator and length from url
+                    const urlParams = new URLSearchParams(window.location.search);
+                    this.actuator = urlParams.get('actuator');
+                    this.length = urlParams.get('length');
+                    if(this.length == null)
+                        this.length = 100;
+                    this.getData();
+                },
+                methods: {
+
+                    //get logs from /getErrors
+                    getData() {
+                        url = '/actuatorHistory?actuator='+this.actuator+'&length='+this.length;
+                        console.log("url:",url);
+                        fetch(url, {method: 'GET'})
+                        .then(response => response.json())
+                        .then(data => {
+                            this.data = data;
+                            //get keys from data
+                            this.keys = Object.keys(data[0]);
+                            console.log("keys:",this.keys);
+
+                            // data.reverse();
+                            console.log(data);
+                        })
+                    }
+
+                }
+            }).mount('#app');
+        </script>
+
+    </body>
+
+</html>

@@ -85,6 +85,7 @@
 					<button @click="setActuatorState(actuator.name, false)" style="background-color: red;">Off</button>
 				</div>
 				
+				<a :href="'actuator.html?actuator=' + actuator.name">info</a>
 
 				<!-- <p v-if="actuator.active == true" class="isActive">aktiv</p>
 				<p v-else class="isInActive">inaktiv</p> -->
