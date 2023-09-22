@@ -53,6 +53,12 @@
     }
 }
 
+
+.chart > .chartInfo{
+	display: inline;
+}
+
+
 /*Navigation Bar Anfang___________________________________________________*/
 
 		.navigationBar{

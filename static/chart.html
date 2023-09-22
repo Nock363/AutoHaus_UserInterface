@@ -412,20 +412,39 @@
                 var datasets = createDataSets(dataFromServer);
                 var labels = createLabels(dataFromServer);
                 
+                //find min and max values for datasets and round it two two decimal places
+                var mins = [];
+                var maxs = [];
+                datasets.forEach(dataset => {
+                    var minmax = findMinMax(dataset);
+                    mins.push(minmax[0]);
+                    maxs.push(minmax[1]);
+                });
+
+
+
                 if(selectedSubForm == "length")
                     labels = labels.slice(-length);
 
                 //create chart for each dataset
-                datasets.forEach(dataset => {
-                    var movAvg = createMovAvgDataSet(dataset,movAvgLength);
-                    
-                    if(selectedSubForm == "length"){
+                datasets.forEach((dataset, index) => {
+                    var movAvg = createMovAvgDataSet(dataset, movAvgLength);
+
+                    if (selectedSubForm == "length") {
                         movAvg.data = movAvg.data.slice(-length);
                         dataset.data = dataset.data.slice(-length);
                     }
-                    var chartObject = createChartCanvas(dataset.name,labels,[dataset,movAvg]);
+
+                    var chartObject = createChartCanvas(
+                        dataset.name,
+                        labels,
+                        [dataset, movAvg],
+                        mins[index],
+                        maxs[index]
+                    );
+
                     chartsContainer.appendChild(chartObject.element);
-                    charts.push(chartObject.chart);
+                    charts.push(chartObject);
                 });
 
                 
@@ -463,35 +482,70 @@
                     // }
 
                     var movAvg = createMovAvgDataSet(datasets[i],movAvgLength);
+
+                    
+
+
                     if(selectedSubForm == "length"){
                         movAvg.data = movAvg.data.slice(-length);
                         datasets[i].data = datasets[i].data.slice(-length);
                     
                     }
 
+                    var minmax = findMinMax(datasets[i]);
                     
-                    charts[i].data.labels = labels;
+                    //update min and max values in chartInfo
+                    var element = charts[i].element;
+                    element.querySelector("#min").innerHTML = "min: " + minmax[0];
+                    element.querySelector("#max").innerHTML = "max: " + minmax[1];
+
+                    var chart = charts[i].chart;
+                    chart.data.labels = labels;
 
                     //safe old hidden state
                     
-                    var dataHidden = (charts[i].getDatasetMeta(0).hidden == true);
-                    var avgHidden = (charts[i].getDatasetMeta(1).hidden == true);
-                    charts[i].data.datasets = [datasets[i],movAvg];
+                    var dataHidden = (chart.getDatasetMeta(0).hidden == true);
+                    var avgHidden = (chart.getDatasetMeta(1).hidden == true);
+                    chart.data.datasets = [datasets[i],movAvg];
                     //restore old hidden state
-                    charts[i].getDatasetMeta(0).hidden = dataHidden;
-                    charts[i].getDatasetMeta(1).hidden = avgHidden;
+                    chart.getDatasetMeta(0).hidden = dataHidden;
+                    chart.getDatasetMeta(1).hidden = avgHidden;
 
-                    charts[i].update();
+                    chart.update();
                 }
 
         });
     }
 
-    function createChartCanvas(name,labels,datasets) {
+    function createChartCanvas(name,labels,datasets,min,max) {
         var chartCanvas = document.createElement('canvas');
         var chartElement = document.createElement("div");
         chartElement.classList.add("chart");
         chartElement.appendChild(chartCanvas);
+        
+
+        //create chartInfo container
+        var chartInfo = document.createElement("div");
+        chartInfo.classList.add("chartInfo");
+
+
+        //minElement is like "min: 0.0" and has id "min"
+        var minElement = document.createElement("p");
+        minElement.id = "min";
+        minElement.style.float = "left";
+        minElement.innerHTML = "min: " + min;
+        chartInfo.appendChild(minElement);
+
+        var maxElement = document.createElement("p");
+        maxElement.id = "max";
+        maxElement.style.float = "right";
+        maxElement.innerHTML = "max: " + max;
+        chartInfo.appendChild(maxElement);
+
+        chartElement.appendChild(chartInfo);
+
+    
+
         chartCanvas.id = name;
         //add chart to charts container
         var ctx = chartCanvas.getContext('2d');
@@ -614,6 +668,12 @@
     });
 }
 
+    function findMinMax(dataset){
+        //find min and max values for datasets and round it two two decimal places
+        var min = Math.round(Math.min(...dataset.data) * 100) / 100;
+        var max = Math.round(Math.max(...dataset.data) * 100) / 100;
+        return [min,max];
+    }
 
     //update chart in updateInterval seconds
     setInterval(function() {
