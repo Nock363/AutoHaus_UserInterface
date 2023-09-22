@@ -49,7 +49,7 @@
                 <p>{{sensor.class}}</p>
 				<p>{{sensor.datastackSize}} Einträge</p>
 				
-				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&avg=10&timeUnit=minute&config=lastTime&timespan=20&timespanUnit=minute'">Chart</a>				
+				<a class="chartLink" :href="'/static/chart.html?sensor=' + sensor.name + '&avg=10&timeUnit=hour&config=lastTime&timespan=24&timespanUnit=hour'">Chart</a>				
 			</div>
 
 			<div v-for="brokenSensor in brokenSensors" :key="brokenSensor.name" class="baseItem manipulator sensor shadow">
