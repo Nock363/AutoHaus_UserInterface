@@ -10,13 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
   <link rel="stylesheet" href="style.css">
 
-  <style>
-    .chart{
-        /* height: 800px; */
-        margin: 2.5% 1%;
-    }
-  </style>
-
 </head>
 <body>
   
@@ -532,13 +525,13 @@
         //minElement is like "min: 0.0" and has id "min"
         var minElement = document.createElement("p");
         minElement.id = "min";
-        minElement.style.float = "left";
+        // minElement.style.float = "left";
         minElement.innerHTML = "min: " + min;
         chartInfo.appendChild(minElement);
 
         var maxElement = document.createElement("p");
         maxElement.id = "max";
-        maxElement.style.float = "right";
+        // maxElement.style.float = "right";
         maxElement.innerHTML = "max: " + max;
         chartInfo.appendChild(maxElement);
 

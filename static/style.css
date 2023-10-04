@@ -53,9 +53,16 @@
     }
 }
 
+.chart{
+	/* height: 800px;
+	max-height: 90%; */
+	margin: 4% 1%;
+	box-sizing: border-box;
+}
 
 .chart > .chartInfo{
 	display: inline;
+	
 }
 
 
