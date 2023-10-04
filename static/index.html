@@ -76,9 +76,9 @@
 			<div v-for="actuator in actuators" :key="actuator.name" class="baseItem manipulator actor shadow">
 				<h2>{{actuator.name}}</h2>
 				<p>{{actuator.type}}</p>
-				<p>{{actuator.datastackSize}} Einträge</p>
+				<!-- <p>{{actuator.datastackSize}} Einträge</p> -->
 				<!-- <p>{{actuator}}</p> -->
-				<p v-if="actuator.active == true">state: {{ actuator.state }} </p>
+				<!-- <p v-if="actuator.active == true">state: {{ actuator.state }} </p> -->
 
 				<div class="controllButtons">
 					<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
@@ -87,8 +87,8 @@
 				
 				<a :href="'actuator.html?actuator=' + actuator.name">info</a>
 
-				<!-- <p v-if="actuator.active == true" class="isActive">aktiv</p>
-				<p v-else class="isInActive">inaktiv</p> -->
+				<p style="position:relative;text-align:left;color:green;right:auto"  v-if="actuator.active == true" class="isActive">aktiv</p>
+				<p style="position:relative;text-align:left;color:red;right:auto" v-else class="isInActive">inaktiv</p>
 			</div>
 
 			<div class="baseItem shadow">
@@ -207,23 +207,7 @@
                     this.info = data.info;
 
 					for (let i = 0; i < this.actuators.length; i++) {
-						//add state to actuators. true= "active",false= "inactive",no data= "unknown"
-						if(this.actuators[i].data.length == 0){
-							this.actuators[i].state = "unknown";
-							break;
-						}
-						if(this.actuators[i].data[0].state == true){
-							this.actuators[i].state = "active";
-							break;
-						}
-						if(this.actuators[i].data[0].state == false){
-							this.actuators[i].state = "inactive";
-							break;
-						}
-						else{
-							this.actuators[i].state = "undefined";
-							break;
-						}
+						this.actuators[i].activeStr = this.actuators[i].active ? "active" : "inactive";
 					}
 					this.logics = data.logics;
 
@@ -264,7 +248,7 @@
 
 			async setActuatorState(name, state) {
 				try {
-					url = "/setActuator/" + name + "/" + state;
+					url = "/setActuator?actuator=" + name + "&state=" + state;
 					const response = await fetch(url);
 					const data = await response.json();
 					if (data.success !== true) {
