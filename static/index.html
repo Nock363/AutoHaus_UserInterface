@@ -36,6 +36,7 @@
 			<h1>Scheduler</h1>
 			<p class="status">scheduler status: {{status}}</p>
 			<a style="color:red;font-weight:bold" href="/static/logs.html"><p class="error">Fehler: {{errorCount}}</p></a>
+			<a style="color:orange;font-weight:bold" href="/static/logs.html"><p class="error">Warnungen: {{warningCount}}</p></a>
 			<button @click="toggleScheduler">{{ buttonLabel }}</button>
 			</div>
 		<div class="module baseGrid sensorList">
@@ -165,6 +166,7 @@
 			brokenLogics: [],
 			errorCount: 0,
 			error: [],
+			warningCount: 0,
             info : "Das System lädt gerade noch, einen moment Geduld bitte",
 			}
 		},
@@ -204,6 +206,7 @@
                     this.sensors = data.sensors;
 					this.actuators = data.actuators;
 					this.errorCount = data.errorCount;
+					this.warningCount = data.warningCount;
                     this.info = data.info;
 
 					for (let i = 0; i < this.actuators.length; i++) {

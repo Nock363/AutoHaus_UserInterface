@@ -1,79 +1,91 @@
 <html>
 
 <head>
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="style.css">
-	
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+	<style>
+        .error {
+            color: red;
+        }
 
-	
-
+        .warning {
+            color: orange;
+        }
+    </style>
 </head>
-
 <body>
 
-	<script>
-		
-	</script>
+    <div id="app" class="content">
 
-	<div id="app" class="content">
+        <div class="loadingOverlay" :class="{hide: !loading}">
+            <p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
+            <div class="loadingIcon">&#8987;</div>
+        </div>
 
-		<div class="loadingOverlay" :class="{hide: !loading}">
-			<p>Das System lädt gerade Noch, einen moment Geduld bitte</p>
-			<div class="loadingIcon">&#8987;</div>
-		</div>
+        <div id="mainConfig" style="display: flex; flex-flow: row; ">
+            <button id="homeButton" onclick="window.location.href = 'index.html';">Home</button>
+        </div>
 
-		<div id="mainConfig" style="display: flex; flex-flow: row; ">
-			
-			<button id="homeButton" onclick="window.location.href = 'index.html';">Home</button>
-
-		</div>
+        <button :class="{disabled: !showWarnings}" :style="{opacity: showWarnings ? 1 : 0.5}" @click="showWarnings = !showWarnings">Warnungen</button>
+        <button :class="{disabled: !showErrors}" :style="{opacity: showErrors ? 1 : 0.5}" @click="showErrors = !showErrors">Fehler</button>
 
         <!--Create a table with two columns. the first colum is log.time and the second colum is log.record.-->
         <table class="module log">
             <tr>
+                <th>Typ</th>
                 <th>Zeit</th>
                 <th>Eintrag</th>
             </tr>
-            <tr v-for="log in logs" :key="log.record">
-                <td>{{ log.time }}</td>
-                <td>{{ log.record }}</td>
+            <tr v-for="log in filteredLogs" :key="log.record">
+                <td :class="log.type === 'error' ? 'error' : log.type === 'warning' ? 'warning' : ''">{{ log.type }}</td>
+                <td :class="log.type === 'error' ? 'error' : log.type === 'warning' ? 'warning' : ''">{{ log.time }}</td>
+                <td :class="log.type === 'error' ? 'error' : log.type === 'warning' ? 'warning' : ''">{{ log.record }}</td>
             </tr>
         </table>
-			
+    </div>
 
+    <script>
+        const { createApp } = Vue
 
-	</div>
-
-	<script>
-		
-		const { createApp } = Vue
-
-		createApp({
-		data() {
-			return {
-				logs: []
-			}
-		},
-		mounted() {
-			this.getLogs();
-		},
-		methods: {
-
-			//get logs from /getErrors
-			getLogs() {
-				fetch('/getErrors')
-				.then(response => response.json())
-				.then(data => {
-					this.logs = data;
-                    data.reverse();
-					console.log(data);
-				})
-			}
-
-		}
-		}).mount('#app');
-	  </script>
+        createApp({
+            data() {
+                return {
+                    logs: [],
+                    showWarnings: true,
+                    showErrors: true
+                }
+            },
+            computed: {
+                filteredLogs() {
+                    return this.logs.filter(log => {
+                        if (log.type === 'warning') {
+                            return this.showWarnings;
+                        } else if (log.type === 'error') {
+                            return this.showErrors;
+                        } else {
+                            return true;
+                        }
+                    });
+                }
+            },
+            mounted() {
+                this.getLogs();
+            },
+            methods: {
+                //get logs from /getErrors
+                getLogs() {
+                    fetch('/getErrors')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.logs = data;
+                        data.reverse();
+                        console.log(data);
+                    })
+                }
+            }
+        }).mount('#app');
+    </script>
 
 </body>
 
