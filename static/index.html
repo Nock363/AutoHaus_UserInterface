@@ -256,6 +256,7 @@
 					const data = await response.json();
 					if (data.success !== true) {
 						this.error = data.error;
+						alert(this.error);
 					} else {
 						this.error = null;
 					}
