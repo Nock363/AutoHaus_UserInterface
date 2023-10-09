@@ -100,43 +100,35 @@
 
 		</div>
 
-			<div class="module baseList logikList">
+			<div class="module baseGrid logikList">
 
 			<h1>Logik</h1>
 
-			
-
-			<div class="baseItem manipulator logic shadow">
-				<!-- <div class="baseInfos" >
-					<h2>Logik 1</h2>
-					<p>Binary Controller</p>
+			<div v-for="logic in logics" :key="logic.name" class="baseItem manipulator logic shadow">
+				<div class="baseInfos" >
+					<h2>{{logic.name}}</h2>
+					<p>{{logic.controller.name}}</p>
 					<p class="isActive">actice</p>
 				</div>
-				<div class="connections">
+				
+				<!--if logic.inputs as elements then display them as connections. otherwise just skip-->
+				<div class="connections" v-if="logic.inputs.length > 0">
 					<h3>Inputs</h3>
-					<p>Sensor 1</p>
-					<p>Sensor 2</p>
-					<p>Sensor 3</p>
-					
+					<p v-for="input in logic.inputs" :key="input.name">&#8594;{{input.sensor}}({{input.input}})</p>
 				</div>
-				<div class="connections">
 
+				<!--if logic.outputs has elements then display them as connections. otherwise just skip-->
+				<div class="connections" v-if="logic.outputs.length > 0">
 					<h3>Outputs</h3>
-					<p>Aktor 1</p>
-					<p>Aktor 2</p>
-					<p>Aktor 3</p> 
-					
-					
+					<p v-for="output in logic.outputs" :key="output.actuator">&#8592;{{output.actuator}}</p>	
 				</div>
-				-->
+
+
 
 				<!--List of inpunts-->
 
 				
 			</div>
-
-			<div class="baseItem manipulator logic shadow" style=""></div>
-
 			<!-- <div class="baseItem shadow">
 
 				<div class="addButton">+</div>
