@@ -105,10 +105,13 @@
 			<h1>Logik</h1>
 
 			<div v-for="logic in logics" :key="logic.name" class="baseItem manipulator logic shadow">
+				
+				<input class="isActive" type="checkbox" v-model="logic.active" @change="toggleLogic(logic)">
+				
 				<div class="baseInfos" >
 					<h2>{{logic.name}}</h2>
 					<p>{{logic.controller.name}}</p>
-					<p class="isActive">actice</p>
+					<!-- <p class="isActive">actice</p> -->
 				</div>
 				
 				<!--if logic.inputs as elements then display them as connections. otherwise just skip-->
@@ -123,10 +126,7 @@
 					<p v-for="output in logic.outputs" :key="output.actuator">&#8592;{{output.actuator}}</p>	
 				</div>
 
-
-
-				<!--List of inpunts-->
-
+				
 				
 			</div>
 			<!-- <div class="baseItem shadow">
@@ -291,6 +291,30 @@
 						location.reload();
 					}
 				});
+			},
+
+			toggleLogic(logic){
+				setState = logic.active;
+				console.log("toggleLogic: " + logic.name + " to " + setState);
+				if(this.status != "broken"){
+					if(confirm("Möchtest du die Logik " + logic + " auf " + setState + "setzen?"))
+						fetch("/setLogic?logic=" + logic.name + "&state=" + setState)
+						.then(response => response.json()) // convert the response to JSON
+						.then(data => {
+							console.log(data);
+							if(data["success"] == true){
+								//reload page
+								location.reload();
+							}
+							else{	
+								alert("Fehler beim setzen des Logik-Status: " + data["error"]);
+								//uncheck the checkbox
+								location.reload();
+							}
+						});
+				}
+			
+			
 			}
 
 		}
