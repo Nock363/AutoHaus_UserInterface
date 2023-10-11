@@ -81,9 +81,16 @@
 				<!-- <p>{{actuator}}</p> -->
 				<!-- <p v-if="actuator.active == true">state: {{ actuator.state }} </p> -->
 
-				<div class="controllButtons">
-					<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
-					<button @click="setActuatorState(actuator.name, false)" style="background-color: red;">Off</button>
+				<div class="controllButtons" v-for="(value, key) in actuator.inputDesc" :key="key">
+					<!-- <p>type: {{value['type']}}</p> -->
+					<div v-if="value['type']=='bool'" class="onOff">
+						<button @click="setActuatorState(actuator.name, true)" style="margin-right: 0.2rem;">On</button>
+						<button @click="setActuatorState(actuator.name, false)" style="background-color: red;">Off</button>
+					</div>
+					<div v-if="value['type']=='int'" class="onOff">
+						<input type="number" v-model="actuator.sendValue">
+						<button @click="setActuatorState(actuator.name,actuator.sendValue)" type="submit">set</button>
+					</div>
 				</div>
 				
 				<a :href="'actuator.html?actuator=' + actuator.name">info</a>
@@ -203,6 +210,25 @@
 
 					for (let i = 0; i < this.actuators.length; i++) {
 						this.actuators[i].activeStr = this.actuators[i].active ? "active" : "inactive";
+
+
+						for (let key in this.actuators[i].inputDesc) {
+							if (this.actuators[i].inputDesc.hasOwnProperty(key)) {
+								var actuator = this.actuators[i]
+								var inputType = this.actuators[i].inputDesc[key].type;
+								switch(inputType){
+									case "<class 'bool'>":
+										actuator.inputDesc[key].type = "bool";
+										break;
+									case "<class 'int'>":
+										actuator.inputDesc[key].type = "int";
+										actuator.sendValue = actuator.config.defaultValue;
+										break;
+									default:
+										console.log("inputType nicht bekannt:")
+								}
+							}
+						}
 					}
 					this.logics = data.logics;
 
