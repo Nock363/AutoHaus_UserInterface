@@ -46,7 +46,7 @@
 			<div v-for="sensor in sensors" :key="sensor.name"  class="baseItem manipulator sensor shadow">
 				
 				<h2>{{sensor.name}}</h2>
-				<input class="isActive" type="checkbox" v-model="sensor.active" @change="setSensorState(sensor.name, sensor.active)"/>
+				<input class="isActive" type="checkbox" v-model="sensor.active" @change="toggleSensor(sensor)"/>
                 <p>{{sensor.class}}</p>
 				<p>{{sensor.datastackSize}} Einträge</p>
 				
@@ -341,6 +341,28 @@
 				}
 			
 			
+			},
+
+			toggleSensor(sensor){
+				setState = sensor.active;
+				console.log("toggleSensor: " + sensor.name + " to " + setState);
+				if(this.status != "broken"){
+					if(confirm("Möchtest du den Sensor " + sensor.name + " auf " + setState + "setzen?"))
+						fetch("/setSensor?sensor=" + sensor.name + "&state=" + setState)
+						.then(response => response.json()) // convert the response to JSON
+						.then(data => {
+							console.log(data);
+							if(data["success"] == true){
+								//reload page
+								location.reload();
+							}
+							else{	
+								alert("Fehler beim setzen des Sensors: " + data["error"]);
+								//uncheck the checkbox
+								location.reload();
+							}
+						});
+				}
 			}
 
 		}
