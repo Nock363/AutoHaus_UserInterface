@@ -347,7 +347,8 @@
 				setState = sensor.active;
 				console.log("toggleSensor: " + sensor.name + " to " + setState);
 				if(this.status != "broken"){
-					if(confirm("Möchtest du den Sensor " + sensor.name + " auf " + setState + "setzen?"))
+					var name = String(sensor.name)
+					if(confirm("Möchtest du den Sensor " + name + " auf " + setState + " setzen?"))
 						fetch("/setSensor?sensor=" + sensor.name + "&state=" + setState)
 						.then(response => response.json()) // convert the response to JSON
 						.then(data => {
